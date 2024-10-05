@@ -25,3 +25,8 @@ flutter run --flavor app_somboon -t lib/app_somboon/main.dart
 # สำหรับ app_apqueue
 flutter build apk --flavor app_apqueue -t lib/app_apqueue/main.dart
 flutter run --flavor app_apqueue -t lib/app_apqueue/main.dart
+
+
+cd lib/app_somboon
+flutter pub get
+

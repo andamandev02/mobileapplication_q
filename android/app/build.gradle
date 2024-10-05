@@ -48,6 +48,14 @@ android {
             applicationId "com.yourcompany.app_apqueue" 
             versionNameSuffix "-apqueue"
         }
+        app_amazon {
+            applicationId "com.yourcompany.app_amazon" 
+            versionNameSuffix "-amazon"
+        }
+        app_gopizza {
+            applicationId "com.yourcompany.app_gopizza" 
+            versionNameSuffix "-gopizza"
+        }
     }
 }
 

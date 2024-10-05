@@ -79,6 +79,7 @@ class _CancelScreenState extends State<CancelScreen> {
                                     await Future.delayed(
                                         const Duration(seconds: 2));
                                     Navigator.of(context).pop();
+                                    Navigator.of(context).pop();
                                   },
                                 ),
                               ),
@@ -109,18 +110,16 @@ class _CancelScreenState extends State<CancelScreen> {
               }).toList(),
               const SizedBox(height: 8),
               ElevatedButton(
-                onPressed: _isLoading // Disable button if loading
-                    ? null
-                    : () async {
-                        setState(() {
-                          _isLoading = true; // Show loading indicator
-                        });
+                onPressed: () async {
+                  setState(() {
+                    _isLoading = true; // Show loading indicator
+                  });
 
-                        await Future.delayed(const Duration(seconds: 2));
+                  // await Future.delayed(const Duration(seconds: 2));
 
-                        // Close the screen after showing the Snackbar
-                        Navigator.of(context).pop();
-                      },
+                  // Close the screen after showing the Snackbar
+                  Navigator.of(context).pop();
+                },
                 style: ElevatedButton.styleFrom(
                   foregroundColor: Colors.black,
                   backgroundColor: const Color.fromARGB(255, 255, 0, 0),

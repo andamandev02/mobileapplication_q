@@ -89,6 +89,9 @@ flavors:
     app_apqueue:
       name: "App Apqueue"
       description: "Flavor for Apqueue app"
+    app_amazon:
+      name: "App Amazon"
+      description: "Flavor for Amazon app"
 
 
 # The following section is specific to Flutter packages.

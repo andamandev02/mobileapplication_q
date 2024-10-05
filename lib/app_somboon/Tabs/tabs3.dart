@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import '../cancel_screen.dart';
+import '../loadingsreen.dart';
 import 'TabData.dart';
 import '../api/queue/crud.dart';
 import '../api/queue/queuelist.dart';
@@ -446,35 +448,65 @@ class _QueueItemWidgetState extends State<QueueItemWidget> {
   }
 
   Future<void> _endQueue(BuildContext context) async {
-    await ClassBranch.EndQueueReasonlist(
-      context: context,
-      branchid: widget.branchId,
-      onReasonLoaded: (loadedReason) {
-        setState(() {
-          Reason = loadedReason;
-        });
-      },
-    );
-
-    SnackBarHelper.showSaveSnackBar(
+    await Navigator.push(
       context,
-      [widget.item],
-      Reason,
-    );
+      MaterialPageRoute(
+        builder: (context) => LoadingScreen(
+          onComplete: () async {
+            await ClassBranch.EndQueueReasonlist(
+              context: context,
+              branchid: widget.branchId,
+              onReasonLoaded: (loadedReason) {
+                setState(() {
+                  Reason = loadedReason;
+                });
+              },
+            );
 
-    await Future.delayed(const Duration(seconds: 2));
-    await widget.onQueueUpdated(widget.branchId, widget.searchQueueNo, '');
+            await Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => CancelScreen(
+                  reason: Reason,
+                  T2OK: [widget.item],
+                ),
+              ),
+            );
+
+            // SnackBarHelper.showSaveSnackBar(
+            //   context,
+            //   [widget.item],
+            //   Reason,
+            // );
+
+            await Future.delayed(const Duration(seconds: 2));
+            await widget.onQueueUpdated(
+                widget.branchId, widget.searchQueueNo, '');
+          },
+        ),
+      ),
+    );
   }
 
   Future<void> _callQueue(BuildContext context) async {
-    await ClassCQueue().UpdateQueue(
-      context: context,
-      SearchQueue: [widget.item],
-      StatusQueue: 'Calling',
-      StatusQueueNote: '',
+    await Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => LoadingScreen(
+          onComplete: () async {
+            await ClassCQueue().UpdateQueue(
+              context: context,
+              SearchQueue: [widget.item],
+              StatusQueue: 'Calling',
+              StatusQueueNote: '',
+            );
+            await Future.delayed(const Duration(seconds: 1));
+            Navigator.of(context).pop();
+            // await widget.onQueueUpdated(widget.branchId, widget.searchQueueNo);
+            widget.tabController.animateTo(0);
+          },
+        ),
+      ),
     );
-    await Future.delayed(const Duration(seconds: 1));
-    // await widget.onQueueUpdated(widget.branchId, widget.searchQueueNo);
-    widget.tabController.animateTo(0);
   }
 }

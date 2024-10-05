@@ -151,18 +151,18 @@ class ClassCQueue {
         // }).catchError((error) {
         //   String ToMsg = "เกิดปัญหาทางเทคนิค";
         //   String queueNumber = error.toString();
-        //   SnackBarHelper.showErrorSnackBar(context, ToMsg, queueNumber);
+        //   SnackBarHelper.showErrorDialog(context, ToMsg, queueNumber);
         // });
         // }
       } else {
         String ToMsg = "เกิดปัญหาทางเทคนิค";
         String queueNumber = "กรุณาโปรดแจ้งพนักงาน";
-        SnackBarHelper.showErrorSnackBar(context, ToMsg, queueNumber);
+        SnackBarHelper.showErrorDialog(context, ToMsg, queueNumber);
       }
     } catch (e) {
       String ToMsg = "ERRORS";
       String queueNumber = '$e';
-      SnackBarHelper.showErrorSnackBar(context, ToMsg, queueNumber);
+      SnackBarHelper.showErrorDialog(context, ToMsg, queueNumber);
     }
   }
 
@@ -217,17 +217,17 @@ class ClassCQueue {
 
         String ToMsg = "ทำการเคลียคิว";
         String queueNumber = "เรียบร้อยแล้ว";
-        SnackBarHelper.showErrorSnackBar(context, ToMsg, queueNumber);
+        SnackBarHelper.showErrorDialog(context, ToMsg, queueNumber);
         Navigator.of(context).pop();
       } else {
         String ToMsg = "เกิดปัญหาทางเทคนิค";
         String queueNumber = "กรุณาโปรดแจ้งพนักงาน";
-        SnackBarHelper.showErrorSnackBar(context, ToMsg, queueNumber);
+        SnackBarHelper.showErrorDialog(context, ToMsg, queueNumber);
       }
     } catch (e) {
       String ToMsg = "ERRORS";
       String queueNumber = '$e';
-      SnackBarHelper.showErrorSnackBar(context, ToMsg, queueNumber);
+      SnackBarHelper.showErrorDialog(context, ToMsg, queueNumber);
     }
   }
 
@@ -284,7 +284,8 @@ class ClassCQueue {
         }
 
         String queueNumber = "${jsonData['data']['data']['queue']['queue_no']}";
-        // SnackBarHelper.showErrorSnackBar(context, ToMsg, queueNumber);
+        // SnackBarHelper.showErrorDialog(context, ToMsg, queueNumber);
+        SnackBarHelper.showErrorDialog(context, ToMsg, queueNumber);
 
         if (innerData.containsKey('caller') && innerData['caller'] is Map) {
           Map<String, dynamic> callerData = innerData['caller'];
@@ -312,17 +313,17 @@ class ClassCQueue {
       } else if (response.statusCode == 422) {
         ToMsg = "มีคิวกำลังเรียกอยู่ ปัจจุบัน";
         String queueNumber = "กรุณาโปรดเคลียคิวก่อน";
-        SnackBarHelper.showErrorSnackBar(context, ToMsg, queueNumber);
+        SnackBarHelper.showErrorDialog(context, ToMsg, queueNumber);
       } else {
         ToMsg = "เกิดปัญหาทางเทคนิค";
         String queueNumber = "กรุณาโปรดแจ้งพนักงาน";
-        SnackBarHelper.showErrorSnackBar(context, ToMsg, queueNumber);
+        SnackBarHelper.showErrorDialog(context, ToMsg, queueNumber);
       }
     } catch (e) {
       String ToMsg = "";
       // String queueNumber = '$e';
       String queueNumber = 'คิวนี้เปลี่ยนสถานะไปแล้ว';
-      SnackBarHelper.showErrorSnackBar(context, ToMsg, queueNumber);
+      SnackBarHelper.showErrorDialog(context, ToMsg, queueNumber);
     }
   }
 
@@ -364,7 +365,7 @@ class ClassCQueue {
 
         String ToMsg = "กำลังเรียกคิว";
         String queueNumber = queueNo;
-        SnackBarHelper.showErrorSnackBar(context, ToMsg, queueNumber);
+        SnackBarHelper.showErrorDialog(context, ToMsg, queueNumber);
 
         if (socket == null || !socket!.connected) {
           await initializeWebSocket();
@@ -408,16 +409,16 @@ class ClassCQueue {
       } else if (response.statusCode == 422) {
         String ToMsg = "มีคิวกำลังใช้งานอยู่";
         String queueNumber = "กรุณาเคลียคิว";
-        SnackBarHelper.showErrorSnackBar(context, ToMsg, queueNumber);
+        SnackBarHelper.showErrorDialog(context, ToMsg, queueNumber);
       } else if (response.statusCode == 421) {
         String ToMsg = "ไม่มีรายการคิว";
         String queueNumber = "กรุณาโปรดเตรียมคิวใหม่";
-        SnackBarHelper.showErrorSnackBar(context, ToMsg, queueNumber);
+        SnackBarHelper.showErrorDialog(context, ToMsg, queueNumber);
       } else {}
     } catch (e) {
       String ToMsg = "ERRORS";
       String queueNumber = "$e";
-      SnackBarHelper.showErrorSnackBar(context, ToMsg, queueNumber);
+      SnackBarHelper.showErrorDialog(context, ToMsg, queueNumber);
     }
   }
 
@@ -455,7 +456,7 @@ class ClassCQueue {
 
         String ToMsg = "กำลังเรียกคิว";
         String queueNumber = queueNo;
-        SnackBarHelper.showErrorSnackBar(context, ToMsg, queueNumber);
+        SnackBarHelper.showErrorDialog(context, ToMsg, queueNumber);
 
         if (socket == null || !socket!.connected) {
           await initializeWebSocket();
@@ -474,7 +475,7 @@ class ClassCQueue {
       } else if (response.statusCode == 422) {
         String ToMsg = "มีคิวกำลังใช้งานอยู่";
         String queueNumber = "กรุณาเคลียคิวให้เสร็จสิ้น";
-        SnackBarHelper.showErrorSnackBar(context, ToMsg, queueNumber);
+        SnackBarHelper.showErrorDialog(context, ToMsg, queueNumber);
         // Future.delayed(const Duration(seconds: 1), () {
         //   if (Navigator.canPop(context)) {
         //     Navigator.of(context).pop();
@@ -484,7 +485,7 @@ class ClassCQueue {
     } catch (e) {
       String ToMsg = "ERRORS";
       String queueNumber = "$e";
-      SnackBarHelper.showErrorSnackBar(context, ToMsg, queueNumber);
+      SnackBarHelper.showErrorDialog(context, ToMsg, queueNumber);
     }
   }
 }

@@ -424,18 +424,30 @@ class _Tab1State extends State<Tab1> {
                                   setState(() {
                                     _isButtonDisabled = true;
                                   });
-                                  await ClassCQueue().UpdateQueue(
-                                    context: context,
-                                    SearchQueue: T2OK,
-                                    StatusQueue: 'Holding',
-                                    StatusQueueNote: '',
-                                  );
 
+                                  await Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) => LoadingScreen(
+                                        onComplete: () async {
+                                          await ClassCQueue().UpdateQueue(
+                                            context: context,
+                                            SearchQueue: T2OK,
+                                            StatusQueue: 'Holding',
+                                            StatusQueueNote: '',
+                                          );
+
+                                          await fetchCallerQueueAll();
+                                          await fetchSearchQueue();
+
+                                          Navigator.of(context).pop();
+                                        },
+                                      ),
+                                    ),
+                                  );
                                   setState(() {
                                     _isButtonDisabled = false;
                                   });
-                                  await fetchCallerQueueAll();
-                                  await fetchSearchQueue();
                                 },
                           style: ElevatedButton.styleFrom(
                             foregroundColor: Colors.white,
@@ -473,16 +485,6 @@ class _Tab1State extends State<Tab1> {
                                     _isButtonDisabled = true;
                                   });
 
-                                  await ClassBranch.EndQueueReasonlist(
-                                    context: context,
-                                    branchid: branchId,
-                                    onReasonLoaded: (loadedReason) {
-                                      setState(() {
-                                        Reason = loadedReason;
-                                      });
-                                    },
-                                  );
-
                                   // SnackBarHelper.showSaveSnackBar(
                                   //   context,
                                   //   T2OK,
@@ -492,21 +494,32 @@ class _Tab1State extends State<Tab1> {
                                   await Navigator.push(
                                     context,
                                     MaterialPageRoute(
-                                      builder: (context) => CancelScreen(
-                                        reason: Reason,
-                                        T2OK: T2OK,
-                                      ),
-                                    ),
-                                  );
-
-                                  // await fetchCallerQueueAll();
-                                  // await fetchSearchQueue();
-
-                                  await Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
                                       builder: (context) => LoadingScreen(
                                         onComplete: () async {
+                                          await ClassBranch.EndQueueReasonlist(
+                                            context: context,
+                                            branchid: branchId,
+                                            onReasonLoaded: (loadedReason) {
+                                              setState(() {
+                                                Reason = loadedReason;
+                                              });
+                                            },
+                                          );
+
+                                          await Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                              builder: (context) =>
+                                                  CancelScreen(
+                                                reason: Reason,
+                                                T2OK: T2OK,
+                                              ),
+                                            ),
+                                          );
+
+                                          // await fetchCallerQueueAll();
+                                          // await fetchSearchQueue();
+
                                           // Fetch your data here
                                           await fetchCallerQueueAll();
                                           await fetchSearchQueue();
@@ -555,13 +568,26 @@ class _Tab1State extends State<Tab1> {
                                     _isButtonDisabled = true;
                                   });
 
-                                  await ClassCQueue().UpdateQueue(
-                                    context: context,
-                                    SearchQueue: T2OK,
-                                    StatusQueue: 'Recalling',
-                                    StatusQueueNote: '',
-                                  );
+                                  await Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) => LoadingScreen(
+                                        onComplete: () async {
+                                          await ClassCQueue().UpdateQueue(
+                                            context: context,
+                                            SearchQueue: T2OK,
+                                            StatusQueue: 'Recalling',
+                                            StatusQueueNote: '',
+                                          );
 
+                                          await fetchCallerQueueAll();
+                                          await fetchSearchQueue();
+
+                                          Navigator.of(context).pop();
+                                        },
+                                      ),
+                                    ),
+                                  );
                                   setState(() {
                                     _isButtonDisabled = false;
                                   });
@@ -683,6 +709,8 @@ class _Tab1State extends State<Tab1> {
                                           // await Future.delayed(const Duration(seconds: 2));
                                           await fetchCallerQueueAll();
                                           await fetchSearchQueue();
+
+                                          Navigator.of(context).pop();
                                         },
                                       ),
                                     ),

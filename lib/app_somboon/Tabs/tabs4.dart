@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
+import '../loadingsreen.dart';
 import 'TabData.dart';
 import '../api/queue/crud.dart';
 import '../api/queue/queuelist.dart';
@@ -721,35 +722,65 @@ class _QueueItemWidgetState extends State<QueueItemWidget> {
   }
 
   Future<void> _callQueue(BuildContext context) async {
-    await ClassCQueue().CallQueue(
-      context: context,
-      SearchQueue: [widget.item],
+    await Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => LoadingScreen(
+          onComplete: () async {
+            await ClassCQueue().CallQueue(
+              context: context,
+              SearchQueue: [widget.item],
+            );
+            await Future.delayed(const Duration(seconds: 2));
+            Navigator.of(context).pop();
+            // await widget.onQueueUpdated(widget.branchId, '', widget.status);
+            widget.tabController.animateTo(0);
+          },
+        ),
+      ),
     );
-    await Future.delayed(const Duration(seconds: 1));
-    // await widget.onQueueUpdated(widget.branchId, '', widget.status);
-    widget.tabController.animateTo(0);
   }
 
   Future<void> _callHQueue(BuildContext context) async {
-    await ClassCQueue().UpdateQueue(
-      context: context,
-      SearchQueue: [widget.item],
-      StatusQueue: 'Calling',
-      StatusQueueNote: '',
+    await Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => LoadingScreen(
+          onComplete: () async {
+            await ClassCQueue().UpdateQueue(
+              context: context,
+              SearchQueue: [widget.item],
+              StatusQueue: 'Calling',
+              StatusQueueNote: '',
+            );
+            await Future.delayed(const Duration(seconds: 1));
+            await widget.onQueueUpdated(widget.branchId, '', widget.status);
+            widget.tabController.animateTo(0);
+          },
+        ),
+      ),
     );
-    await Future.delayed(const Duration(seconds: 1));
-    await widget.onQueueUpdated(widget.branchId, '', widget.status);
-    widget.tabController.animateTo(0);
   }
 
   Future<void> _recallQueue(BuildContext context) async {
-    await ClassCQueue().UpdateQueue(
-      context: context,
-      SearchQueue: [widget.item],
-      StatusQueue: 'Recalling',
-      StatusQueueNote: '',
+    await Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => LoadingScreen(
+          onComplete: () async {
+            await ClassCQueue().UpdateQueue(
+              context: context,
+              SearchQueue: [widget.item],
+              StatusQueue: 'Recalling',
+              StatusQueueNote: '',
+            );
+            await Future.delayed(const Duration(seconds: 2));
+            Navigator.of(context).pop();
+            // await widget.onQueueUpdated(widget.branchId, '', widget.status);
+          },
+        ),
+      ),
     );
-    // await widget.onQueueUpdated(widget.branchId, '', widget.status);
   }
 
   Future<void> _reprintQueue(BuildContext context) async {
@@ -758,14 +789,24 @@ class _QueueItemWidgetState extends State<QueueItemWidget> {
   }
 
   Future<void> _holdQueue(BuildContext context) async {
-    await ClassCQueue().UpdateQueue(
-      context: context,
-      SearchQueue: [widget.item],
-      StatusQueue: 'Holding',
-      StatusQueueNote: '',
+    await Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => LoadingScreen(
+          onComplete: () async {
+            await ClassCQueue().UpdateQueue(
+              context: context,
+              SearchQueue: [widget.item],
+              StatusQueue: 'Holding',
+              StatusQueueNote: '',
+            );
+            await Future.delayed(const Duration(seconds: 2));
+            Navigator.of(context).pop();
+            await widget.onQueueUpdated(widget.branchId, '', widget.status);
+          },
+        ),
+      ),
     );
-    await Future.delayed(const Duration(seconds: 2));
-    await widget.onQueueUpdated(widget.branchId, '', widget.status);
   }
 
   String _getStatusText(QueueStatus status) {

@@ -434,31 +434,31 @@ class _QueueItemWidgetState extends State<QueueItemWidget> {
   }
 
   Future<void> _endQueue(BuildContext context) async {
-    await ClassBranch.EndQueueReasonlist(
-      context: context,
-      branchid: widget.branchId,
-      onReasonLoaded: (loadedReason) {
-        setState(() {
-          Reason = loadedReason;
-        });
-      },
-    );
-
-    await Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) => CancelScreen(
-          reason: Reason,
-          T2OK: [widget.item],
-        ),
-      ),
-    );
-
     await Navigator.push(
       context,
       MaterialPageRoute(
         builder: (context) => LoadingScreen(
           onComplete: () async {
+            await ClassBranch.EndQueueReasonlist(
+              context: context,
+              branchid: widget.branchId,
+              onReasonLoaded: (loadedReason) {
+                setState(() {
+                  Reason = loadedReason;
+                });
+              },
+            );
+
+            await Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => CancelScreen(
+                  reason: Reason,
+                  T2OK: [widget.item],
+                ),
+              ),
+            );
+
             await widget.onQueueUpdated(
                 widget.branchId, widget.searchQueueNo, '');
           },
@@ -477,12 +477,23 @@ class _QueueItemWidgetState extends State<QueueItemWidget> {
   }
 
   Future<void> _callQueue(BuildContext context) async {
-    await ClassCQueue().CallQueue(
-      context: context,
-      SearchQueue: [widget.item],
+    await Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => LoadingScreen(
+          onComplete: () async {
+            await ClassCQueue().CallQueue(
+              context: context,
+              SearchQueue: [widget.item],
+            );
+            await Future.delayed(const Duration(seconds: 1));
+            Navigator.of(context).pop();
+
+            // await widget.onQueueUpdated(widget.branchId, widget.searchQueueNo);
+            widget.tabController.animateTo(0);
+          },
+        ),
+      ),
     );
-    await Future.delayed(const Duration(seconds: 1));
-    // await widget.onQueueUpdated(widget.branchId, widget.searchQueueNo);
-    widget.tabController.animateTo(0);
   }
 }

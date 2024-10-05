@@ -334,6 +334,61 @@ String DISPLAY_UPDATE_STATUS = "display:update-status";
 // }
 
 class SnackBarHelper {
+  static void showErrorDialog(
+      BuildContext context, String message, String queueNumber) {
+    showDialog(
+      context: context,
+      barrierDismissible: false, // ปิด dialog โดยการคลิกนอก dialog
+      builder: (BuildContext context) {
+        return AlertDialog(
+          content: Container(
+            decoration: BoxDecoration(
+              color: Colors.white,
+              border: Border.all(
+                width: 1.0,
+                color: const Color.fromARGB(255, 255, 255, 255),
+              ),
+              borderRadius: BorderRadius.circular(20),
+            ),
+            width: MediaQuery.of(context).size.width * 0.8, // ขนาด dialog
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Icon(
+                  Icons.error_outline,
+                  color: Colors.red,
+                  size: MediaQuery.of(context).size.width * 0.2,
+                ),
+                SizedBox(height: 8),
+                Text(
+                  message,
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    fontSize: MediaQuery.of(context).size.width * 0.07,
+                    color: Color.fromRGBO(9, 159, 175, 1.0),
+                    fontWeight: FontWeight.bold,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ),
+                SizedBox(height: 8),
+                Text(
+                  queueNumber,
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    fontSize: MediaQuery.of(context).size.width * 0.05,
+                    color: Color.fromRGBO(9, 159, 175, 1.0),
+                    fontWeight: FontWeight.bold,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+
   static void showErrorSnackBar(
       BuildContext context, String message, String queueNumber) {
     final snackBar = SnackBar(
