@@ -1,5 +1,5 @@
 name: app_apqueue
-description: A Flutter app for Apqueue
+description: A Flutter app for AP Queue
 version: 1.0.0+1
 
 environment:
@@ -8,7 +8,36 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+
   # ใส่ dependencies อื่นๆ ที่คุณต้องการสำหรับ flavor นี้
+  cupertino_icons: ^1.0.8
+  web_socket_channel: ^3.0.0
+  qr_flutter: ^4.1.0
+  http: ^1.2.1
+  json_annotation: ^4.9.0
+  audioplayers: ^6.0.0
+  hive: ^2.2.3
+  provider: ^6.1.2
+  hive_flutter: ^1.1.0
+  # pdf_viewer_plugin: ^2.0.1
+  esc_pos_utils: ^1.1.0
+  # printing: ^5.12.0
+  # pdf: ^3.11.0
+  intl: ^0.19.0
+  webview_flutter: ^4.8.0
+  loading_animation_widget: ^1.2.1
+  flutter_speed_dial: ^7.0.0
+  screenshot: ^3.0.0
+  shared_preferences: ^2.2.3
+  socket_io_client: ^2.0.3+1
+  connectivity_plus: ^6.0.3
+  permission_handler: ^11.3.1
+  get: ^4.6.6
+  # flutter_blue: ^0.8.0
+  blue_thermal_printer: ^1.2.3
+  nyx_printer: ^0.0.1
+  collection: ^1.18.0
+  # flutter_launcher_icons: ^0.13.1
 
 flutter:
   uses-material-design: true
