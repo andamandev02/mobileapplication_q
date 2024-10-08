@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'dart:async';
 import 'package:blue_thermal_printer/blue_thermal_printer.dart';
 import 'package:flutter/services.dart';
-
 import '../print/testprint.dart';
 
 class SettingScreen extends StatefulWidget {
@@ -23,41 +22,10 @@ class _SettingScreenState extends State<SettingScreen> {
   bool _connected = false;
   TestPrint testPrint = TestPrint();
 
-  late Box giveNameBox;
-  bool isChecked = false;
-  final String boxName = 'GiveNameBox';
-
   @override
   void initState() {
     super.initState();
     initPlatformState();
-    openHiveBox();
-  }
-
-  Future<void> openHiveBox() async {
-    giveNameBox = await Hive.openBox<String>(boxName);
-    // อ่านค่าจาก Hive เมื่อเปิดโปรแกรม
-    String? storedValue = giveNameBox.get('GiveName');
-    if (storedValue == 'Checked') {
-      setState(() {
-        isChecked = true;
-      });
-    }
-  }
-
-  Future<void> addToHive(String GiveName) async {
-    if (giveNameBox.containsKey('GiveName')) {
-      await giveNameBox.delete('GiveName');
-    }
-    await giveNameBox.put('GiveName', GiveName);
-    setState(() {});
-  }
-
-  void _onCheckboxChanged(bool? value) {
-    setState(() {
-      isChecked = value ?? false;
-      addToHive(isChecked ? 'Checked' : 'Unchecked');
-    });
   }
 
   Future<void> initPlatformState() async {
@@ -152,7 +120,7 @@ class _SettingScreenState extends State<SettingScreen> {
       backgroundColor: const Color.fromARGB(255, 0, 67, 122),
       appBar: AppBar(
         title: const Text(
-          'การตั้งค่าระบบ | Setting Systems',
+          'Select Printer',
           style: TextStyle(
             fontSize: 25.0,
             color: Colors.white,
@@ -173,9 +141,8 @@ class _SettingScreenState extends State<SettingScreen> {
               children: <Widget>[
                 const SizedBox(width: 10),
                 const Text(
-                  'เลือกเครื่องพิมพ์ | Device :',
+                  'Device:',
                   style: TextStyle(
-                    color: Colors.white,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
@@ -202,7 +169,7 @@ class _SettingScreenState extends State<SettingScreen> {
                     initPlatformState();
                   },
                   child: const Text(
-                    'รีเฟรช | Refresh',
+                    'Refresh',
                     style: TextStyle(color: Colors.white),
                   ),
                 ),
@@ -212,41 +179,22 @@ class _SettingScreenState extends State<SettingScreen> {
                       backgroundColor: _connected ? Colors.red : Colors.green),
                   onPressed: _connected ? _disconnect : _connect,
                   child: Text(
-                    _connected
-                        ? 'กำลังเชื่อมต่ออยู่ | Connected'
-                        : 'เชื่อมต่อ | Connect',
-                    style: const TextStyle(color: Colors.white),
+                    _connected ? 'Connected' : 'Connect',
+                    style: TextStyle(color: Colors.white),
                   ),
                 ),
               ],
             ),
             Padding(
-              padding: const EdgeInsets.only(left: 10.0, right: 10.0, top: 20),
+              padding: const EdgeInsets.only(left: 10.0, right: 10.0, top: 50),
               child: ElevatedButton(
                 style: ElevatedButton.styleFrom(backgroundColor: Colors.brown),
                 onPressed: () {
                   testPrint.sample();
                 },
-                child: const Text('ทดสอบพิมพ์ | PRINT TEST',
+                child: const Text('PRINT TEST',
                     style: TextStyle(color: Colors.white)),
               ),
-            ),
-            const SizedBox(height: 20),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.start,
-              children: [
-                Transform.scale(
-                  scale: 1.5,
-                  child: Checkbox(
-                    value: isChecked,
-                    onChanged: _onCheckboxChanged,
-                  ),
-                ),
-                const SizedBox(width: 20),
-                const Text(
-                    'ทำการ เพิ่มชื่อ และ เบอร์โทรศัพท์ของลูกค้าได้\nGive Name & Phone In Numpad',
-                    style: TextStyle(color: Colors.white, fontSize: 14)),
-              ],
             ),
           ],
         ),
@@ -257,11 +205,8 @@ class _SettingScreenState extends State<SettingScreen> {
   List<DropdownMenuItem<BluetoothDevice>> _getDeviceItems() {
     List<DropdownMenuItem<BluetoothDevice>> items = [];
     if (_devices.isEmpty) {
-      items.add(const DropdownMenuItem(
-        child: Text(
-          'NONE',
-          style: TextStyle(color: Colors.white),
-        ),
+      items.add(DropdownMenuItem(
+        child: Text('NONE'),
       ));
     } else {
       _devices.forEach((device) {

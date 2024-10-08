@@ -23,11 +23,7 @@ class _CancelScreenState extends State<CancelScreen> {
   Widget build(BuildContext context) {
     final screenWidth = MediaQuery.of(context).size.width;
     final screenHeight = MediaQuery.of(context).size.height;
-    // รับขนาดหน้าจอ
-    final size = MediaQuery.of(context).size;
-    final buttonHeight = size.height * 0.06;
-    final buttonWidth = size.width * 0.2;
-    final fontSize = size.height * 0.02;
+
     return Container(
       decoration: BoxDecoration(
         color: Colors.white,
@@ -35,6 +31,7 @@ class _CancelScreenState extends State<CancelScreen> {
             width: 1.0, color: const Color.fromARGB(255, 255, 255, 255)),
         borderRadius: BorderRadius.circular(0),
       ),
+      // margin: const EdgeInsets.fromLTRB(0, 0, 0, 100),
       child: Center(
         child: Container(
           padding: const EdgeInsets.symmetric(vertical: 20.0),
@@ -42,11 +39,11 @@ class _CancelScreenState extends State<CancelScreen> {
             mainAxisSize: MainAxisSize.min,
             children: [
               Text(
-                "Queue Number : ${widget.T2OK.isNotEmpty ? widget.T2OK.first['queue_no'] ?? 'N/A' : 'No Data'}",
-                style: TextStyle(
-                  fontSize: fontSize * 1.5,
+                "เลขคิวที่จบบริการ : ${widget.T2OK.isNotEmpty ? widget.T2OK.first['queue_no'] ?? 'N/A' : 'No Data'}",
+                style: const TextStyle(
+                  fontSize: 35,
                   fontWeight: FontWeight.bold,
-                  color: const Color.fromARGB(255, 0, 67, 122),
+                  color: Color.fromRGBO(9, 159, 175, 1.0),
                 ),
                 textAlign: TextAlign.center,
               ),
@@ -54,7 +51,7 @@ class _CancelScreenState extends State<CancelScreen> {
               ...widget.reason.map((reason) {
                 final bool isGreen = reason['reason_id'] == '1';
                 return Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 3.0),
+                  padding: const EdgeInsets.symmetric(vertical: 4.0),
                   child: ElevatedButton(
                     onPressed: _isLoading // Disable button if loading
                         ? null
@@ -91,7 +88,7 @@ class _CancelScreenState extends State<CancelScreen> {
                     style: ElevatedButton.styleFrom(
                       foregroundColor: Colors.black,
                       backgroundColor: isGreen
-                          ? const Color.fromARGB(255, 0, 67, 122)
+                          ? const Color.fromRGBO(9, 159, 175, 1.0)
                           : const Color.fromARGB(255, 219, 118, 2),
                       minimumSize: Size(screenWidth * 0.8, screenHeight * 0.10),
                       shape: RoundedRectangleBorder(
@@ -101,19 +98,17 @@ class _CancelScreenState extends State<CancelScreen> {
                     ),
                     child: Text(
                       reason['reason_id'] == '1'
-                          ? (reason['reson_name'] ?? '')
-                              .replaceAll('|', '\n') // แทนที่ | ด้วย \n
-                          : 'ยกเลิก : ${(reason['reson_name'] ?? '').replaceAll('|', '\n')}', // แทนที่ | ด้วย \n
-                      textAlign: TextAlign.center, // จัดให้อยู่ตรงกลาง
+                          ? reason['reson_name'] ?? ''
+                          : 'ยกเลิก : ${reason['reson_name'] ?? ''}',
                       style: TextStyle(
                         color: Colors.white,
-                        fontSize: fontSize * 1.4,
+                        fontSize: screenWidth * 0.05,
                       ),
                     ),
                   ),
                 );
               }).toList(),
-              const SizedBox(height: 3),
+              const SizedBox(height: 8),
               ElevatedButton(
                 onPressed: () async {
                   setState(() {
@@ -135,9 +130,11 @@ class _CancelScreenState extends State<CancelScreen> {
                   padding: EdgeInsets.symmetric(horizontal: 10),
                 ),
                 child: Text(
-                  'ปิดหน้าต่าง | Close',
-                  style:
-                      TextStyle(color: Colors.white, fontSize: fontSize * 1.4),
+                  'ปิดหน้าต่าง',
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: screenWidth * 0.05,
+                  ),
                 ),
               ),
             ],

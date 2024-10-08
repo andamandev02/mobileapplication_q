@@ -127,16 +127,14 @@ class PrintNew {
     //     await bluetooth.connect(device);
     //     print('Bluetooth connected');
 
-    String filename = 'GetImage-removebg-preview.png';
-    ByteData bytesData =
-        await rootBundle.load("assets/logo/GetImage-removebg-preview.png");
+    String filename = 'images-v (1).jpg';
+    ByteData bytesData = await rootBundle.load("assets/logo/images-v (1).jpg");
     String dir = (await getApplicationDocumentsDirectory()).path;
     File file = await File('$dir/$filename').writeAsBytes(bytesData.buffer
         .asUint8List(bytesData.offsetInBytes, bytesData.lengthInBytes));
 
     /// Image from Asset
-    ByteData bytesAsset =
-        await rootBundle.load("assets/logo/GetImage-removebg-preview.png");
+    ByteData bytesAsset = await rootBundle.load("assets/logo/images-v (1).jpg");
     Uint8List imageBytesFromAsset = bytesAsset.buffer
         .asUint8List(bytesAsset.offsetInBytes, bytesAsset.lengthInBytes);
 
@@ -189,14 +187,10 @@ class PrintNew {
     int height = 100;
     bluetooth.printImageBytes(resizedImageBytes, 70, 70);
 
-    // bluetooth.printCustom(
-    //     "${_qrData['data']['branch']['branch_name']}  ${formattedQueueTime}",
-    //     Size.bold.val,
-    //     Align.center.val);
-    // bluetooth.printNewLine();
-
     bluetooth.printCustom(
-        "${formattedQueueTime}", Size.bold.val, Align.center.val);
+        "${_qrData['data']['branch']['branch_name']}  ${formattedQueueTime}",
+        Size.bold.val,
+        Align.center.val);
     bluetooth.printNewLine();
 
     bluetooth.printCustom("${_qrData['data']['queue']['queue_no']}",
@@ -207,19 +201,9 @@ class PrintNew {
         Size.boldMedium.val, Align.center.val);
     bluetooth.printNewLine();
 
-    bluetooth.printImageBytes(resizedImageBytesF, 1, 1);
-
-    bluetooth.printCustom(
-        "หากคุณผ่านหมายเลขแล้ว โปรดติดต่อแผนกต้อนรับเพื่อต้อนรับคุณ",
-        Size.bold.val,
-        Align.center.val);
-    bluetooth.printNewLine();
-
-    bluetooth.printCustom(
-        "If you pass the number, please contact the door at the front desk.",
-        Size.bold.val,
-        Align.center.val);
-    bluetooth.printNewLine();
+    bluetooth.printCustom("If your number has passed,Please get new ticket",
+        Size.bold.val, Align.center.val);
+    // bluetooth.printNewLine();
 
     // bluetooth.printQRcode(
     //     'https://apq.andamandev.com/en/app/kiosk/scan-queue?id=${_qrData['data']['queue']['queue_id']}',
@@ -228,6 +212,7 @@ class PrintNew {
     //     Align.center.val);
 
     // bluetooth.printCustom("如果过号,请从新取牌", Size.bold.val, Align.center.val);
+    bluetooth.printImageBytes(resizedImageBytesF, 1, 1);
     // bluetooth.printNewLine();
     // bluetooth.printNewLine();
 
@@ -235,17 +220,9 @@ class PrintNew {
     bluetooth.printImageBytes(qrCodeBytes, width, height);
     bluetooth.printNewLine();
 
-    bluetooth.printImageBytes(resizedImageBytesF, 1, 1);
-
-    bluetooth.printCustom("สแกนรหัสนี้เพื่อดูว่ามีคนอยู่ตรงหน้าคุณกี่คน.",
-        Size.bold.val, Align.center.val);
     bluetooth.printNewLine();
-
-    // bluetooth.printNewLine();
     bluetooth.printCustom(
-        "Scan this code to know how many people are in front of you.",
-        Size.bold.val,
-        Align.center.val);
+        "Everyone must be here to be seated.", Size.bold.val, Align.center.val);
     // bluetooth.printNewLine();
 
     // bluetooth.printCustom(
@@ -254,19 +231,13 @@ class PrintNew {
     //   Align.center.val,
     // );
     bluetooth.printImageBytes(resizedImageBytesFF, 1, 1);
-
-    bluetooth.printImageBytes(resizedImageBytesFF, 1, 1);
-
-    bluetooth.printCustom(
-        "หมายเลขโทรศัพท์ : 0834500001", Size.bold.val, Align.center.val);
-
     // bluetooth.printNewLine();
     // bluetooth.printNewLine();
 
-    // bluetooth.printCustom("Waiting ${_qrData['data']['count']} Queues",
-    //     Size.boldMedium.val, Align.center.val);
-    // bluetooth.printNewLine();
-    // bluetooth.printNewLine();
+    bluetooth.printCustom("Waiting ${_qrData['data']['count']} Queues",
+        Size.boldMedium.val, Align.center.val);
+    bluetooth.printNewLine();
+    bluetooth.printNewLine();
 
     bluetooth
         .paperCut(); // Some printers not supported (sometime making image not centered)

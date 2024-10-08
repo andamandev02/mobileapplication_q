@@ -43,30 +43,10 @@ class _Tab1State extends State<Tab1> {
 
   bool _isButtonDisabled = false;
 
-  late Box giveNameBox;
-  bool? isChecked;
-  final String boxName = 'GiveNameBox';
-
-  @override
-  void initState() {
-    super.initState();
-    openHiveBox();
-  }
-
-  Future<void> openHiveBox() async {
-    giveNameBox = await Hive.openBox<String>(boxName);
-    String? storedValue = giveNameBox.get('GiveName');
-    if (storedValue == 'Checked') {
-      setState(() {
-        isChecked = true;
-      });
-    }
-  }
-
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    // FocusScope.of(context).requestFocus(FocusNode());
+    FocusScope.of(context).requestFocus(FocusNode());
     final tabData = TabData.of(context);
     if (tabData != null) {
       branchId = tabData.branches['branch_id'];
@@ -172,16 +152,15 @@ class _Tab1State extends State<Tab1> {
 
     // รับขนาดหน้าจอ
     final size = MediaQuery.of(context).size;
-    final buttonHeight = size.height * 0.06;
-    final buttonWidth = size.width * 0.2;
-    final fontSize = size.height * 0.02;
+    final buttonHeight = size.height * 0.06; // 6% ของความสูงหน้าจอ
+    final buttonWidth = size.width * 0.2; // 20% ของความกว้างหน้าจอ
 
     return Padding(
       padding: EdgeInsets.symmetric(vertical: size.height * 0.00),
       child: Card(
         elevation: 5,
         child: Padding(
-          padding: const EdgeInsets.all(5.0),
+          padding: const EdgeInsets.all(16.0),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
@@ -195,179 +174,167 @@ class _Tab1State extends State<Tab1> {
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceAround,
                           children: [
-                            Expanded(
-                              flex: 1,
-                              child: Column(
-                                children: [
-                                  Text(
-                                    'Service\n${T1['service_group_name']}',
-                                    style: Theme.of(context)
-                                        .textTheme
-                                        .titleLarge
-                                        ?.copyWith(
-                                          fontSize: fontSize,
-                                          color: const Color.fromARGB(
-                                              255, 0, 67, 122),
-                                        ),
-                                    textAlign: TextAlign.center,
-                                  ),
-                                  // Text(
-                                  //   '${T1['t_kiosk_btn_name']}',
-                                  //   style: Theme.of(context)
-                                  //       .textTheme
-                                  //       .titleLarge
-                                  //       ?.copyWith(
-                                  //         fontSize: fontSize,
-                                  //         color: const Color.fromARGB(
-                                  //             255, 0, 67, 122),
-                                  //       ),
-                                  //   textAlign: TextAlign.center,
-                                  // ),
-                                ],
-                              ),
+                            Column(
+                              children: [
+                                Text(
+                                  'Service\n${T1['service_group_name']}',
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .titleLarge
+                                      ?.copyWith(
+                                        fontSize: 20.0, // ปรับขนาดฟอนต์
+                                        color: const Color.fromRGBO(
+                                            9, 159, 175, 1.0),
+                                      ),
+                                  textAlign: TextAlign.center,
+                                ),
+                                Text(
+                                  '${T1['t_kiosk_btn_name']}',
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .titleLarge
+                                      ?.copyWith(
+                                        fontSize: 20.0, // ปรับขนาดฟอนต์
+                                        color: const Color.fromRGBO(
+                                            9, 159, 175, 1.0),
+                                      ),
+                                  textAlign: TextAlign.center,
+                                ),
+                              ],
                             ),
-                            Expanded(
-                              flex: 1,
-                              child: Column(
-                                children: [
+                            Column(
+                              children: [
+                                Text(
+                                  'คิวรอ',
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .titleLarge
+                                      ?.copyWith(
+                                        fontSize: 20.0, // ปรับขนาดฟอนต์
+                                        color: const Color.fromRGBO(
+                                            9, 159, 175, 1.0),
+                                        // fontWeight: FontWeight.bold,
+                                      ),
+                                  textAlign: TextAlign.center,
+                                ),
+                                Text(
+                                  '${countPerGroup[T1['branch_service_group_id']] ?? 0}',
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .titleLarge
+                                      ?.copyWith(
+                                        fontSize: 20.0, // ปรับขนาดฟอนต์
+                                        color: const Color.fromRGBO(
+                                            9, 159, 175, 1.0),
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                  textAlign: TextAlign.center,
+                                ),
+                              ],
+                            ),
+                            Column(
+                              children: [
+                                Text(
+                                  'คิวถัดไป',
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .titleLarge
+                                      ?.copyWith(
+                                        fontSize: 20.0, // ปรับขนาดฟอนต์
+                                        color: const Color.fromRGBO(
+                                            9, 159, 175, 1.0),
+                                        // fontWeight: FontWeight.bold,
+                                      ),
+                                  textAlign: TextAlign.center,
+                                ),
+                                if (TQOKKK != null)
                                   Text(
-                                    'wait',
+                                    '${TQOKKK['queue_no']} (${TQOKKK['number_pax']})',
                                     style: Theme.of(context)
                                         .textTheme
                                         .titleLarge
                                         ?.copyWith(
-                                          fontSize: fontSize,
-                                          color: const Color.fromARGB(
-                                              255, 0, 67, 122),
+                                          fontSize: 20.0, // ปรับขนาดฟอนต์
+                                          color: const Color.fromRGBO(
+                                              9, 159, 175, 1.0),
+                                          fontWeight: FontWeight.bold,
                                         ),
                                     textAlign: TextAlign.center,
-                                  ),
+                                  )
+                                else
                                   Text(
-                                    '${countPerGroup[T1['branch_service_group_id']] ?? 0}',
+                                    '-',
                                     style: Theme.of(context)
                                         .textTheme
                                         .titleLarge
                                         ?.copyWith(
-                                          fontSize: fontSize,
-                                          color: const Color.fromARGB(
-                                              255, 0, 67, 122),
+                                          fontSize: 20.0, // ปรับขนาดฟอนต์
+                                          color: const Color.fromRGBO(
+                                              9, 159, 175, 1.0),
                                           fontWeight: FontWeight.bold,
                                         ),
                                     textAlign: TextAlign.center,
                                   ),
-                                ],
-                              ),
-                            ),
-                            Expanded(
-                              flex: 1,
-                              child: Column(
-                                children: [
-                                  Text(
-                                    'next',
-                                    style: Theme.of(context)
-                                        .textTheme
-                                        .titleLarge
-                                        ?.copyWith(
-                                          fontSize: fontSize,
-                                          color: const Color.fromARGB(
-                                              255, 0, 67, 122),
-                                          // fontWeight: FontWeight.bold,
-                                        ),
-                                    textAlign: TextAlign.center,
-                                  ),
-                                  if (TQOKKK != null)
-                                    Text(
-                                      '${TQOKKK['queue_no']}\n(${TQOKKK['number_pax']})',
-                                      style: Theme.of(context)
-                                          .textTheme
-                                          .titleLarge
-                                          ?.copyWith(
-                                            fontSize: fontSize,
-                                            color: const Color.fromARGB(
-                                                255, 0, 67, 122),
-                                            fontWeight: FontWeight.bold,
-                                          ),
-                                      textAlign: TextAlign.center,
-                                    )
-                                  else
-                                    Text(
-                                      '-',
-                                      style: Theme.of(context)
-                                          .textTheme
-                                          .titleLarge
-                                          ?.copyWith(
-                                            fontSize: fontSize,
-                                            color: const Color.fromARGB(
-                                                255, 0, 67, 122),
-                                            fontWeight: FontWeight.bold,
-                                          ),
-                                      textAlign: TextAlign.center,
-                                    ),
-                                ],
-                              ),
-                            ),
-                            Expanded(
-                              flex: 3,
-                              child: Container(
-                                padding: EdgeInsets.all(size.height * 0.01),
-                                decoration: BoxDecoration(
-                                  border: Border.all(
-                                    color:
-                                        const Color.fromARGB(255, 0, 67, 122),
-                                  ),
-                                  borderRadius: BorderRadius.circular(50),
-                                ),
-                                child: Center(
-                                  child: Column(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: [
-                                      // Text(
-                                      //   displayText,
-                                      //   style: Theme.of(context).textTheme.titleLarge,
-                                      // ),
-                                      Column(
-                                        children: [
-                                          if (T2OK.isNotEmpty)
-                                            ...T2OK.map(
-                                              (queue) => Text(
-                                                '${queue['queue_no']} ',
-                                                style: Theme.of(context)
-                                                    .textTheme
-                                                    .titleLarge
-                                                    ?.copyWith(
-                                                      fontSize: fontSize * 1.5,
-                                                      color:
-                                                          const Color.fromARGB(
-                                                              255, 0, 67, 122),
-                                                      fontWeight:
-                                                          FontWeight.bold,
-                                                    ),
-                                                textAlign: TextAlign.center,
-                                              ),
-                                            )
-                                          else
-                                            Text(
-                                              '',
-                                              style: Theme.of(context)
-                                                  .textTheme
-                                                  .titleLarge
-                                                  ?.copyWith(
-                                                    fontSize: fontSize * 1.5,
-                                                    color: const Color.fromRGBO(
-                                                        9, 159, 175, 1.0),
-                                                    fontWeight: FontWeight.bold,
-                                                  ),
-                                            ),
-                                        ],
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              ),
+                              ],
                             ),
                           ],
                         )
                       ],
+                    ),
+                  ),
+                  Expanded(
+                    flex: 2,
+                    child: Container(
+                      padding: EdgeInsets.all(size.height * 0.01),
+                      decoration: BoxDecoration(
+                        border: Border.all(
+                            color: const Color.fromRGBO(9, 159, 175, 1.0)),
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      child: Center(
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            // Text(
+                            //   displayText,
+                            //   style: Theme.of(context).textTheme.titleLarge,
+                            // ),
+                            Column(
+                              children: [
+                                if (T2OK.isNotEmpty)
+                                  ...T2OK.map(
+                                    (queue) => Text(
+                                      '${queue['queue_no']} ',
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .titleLarge
+                                          ?.copyWith(
+                                            fontSize: 50.0, // ปรับขนาดฟอนต์
+                                            color: const Color.fromRGBO(
+                                                9, 159, 175, 1.0),
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                      textAlign: TextAlign.center,
+                                    ),
+                                  )
+                                else
+                                  Text(
+                                    '',
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .titleLarge
+                                        ?.copyWith(
+                                          fontSize: 30.0, // ปรับขนาดฟอนต์
+                                          color: const Color.fromRGBO(
+                                              9, 159, 175, 1.0),
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                  ),
+                              ],
+                            ),
+                          ],
+                        ),
+                      ),
                     ),
                   ),
                 ],
@@ -424,7 +391,7 @@ class _Tab1State extends State<Tab1> {
                         style: ElevatedButton.styleFrom(
                           foregroundColor: Colors.white,
                           backgroundColor:
-                              const Color.fromARGB(255, 0, 67, 122),
+                              const Color.fromRGBO(9, 159, 175, 1.0),
                           padding: EdgeInsets.symmetric(
                               vertical: size.height * 0.00),
                           minimumSize: Size(double.infinity, buttonHeight),
@@ -436,10 +403,10 @@ class _Tab1State extends State<Tab1> {
                             borderRadius: BorderRadius.circular(8),
                           ),
                         ),
-                        child: Text(
-                          'ADD Q',
+                        child: const Text(
+                          'เพิ่มคิว',
                           style: TextStyle(
-                            fontSize: fontSize,
+                            fontSize: 20.0,
                             color: Colors.white,
                           ),
                         ),
@@ -497,10 +464,10 @@ class _Tab1State extends State<Tab1> {
                               borderRadius: BorderRadius.circular(8),
                             ),
                           ),
-                          child: Text(
-                            'Hold',
+                          child: const Text(
+                            'พักคิว',
                             style: TextStyle(
-                              fontSize: fontSize,
+                              fontSize: 20.0,
                               color: Colors.white,
                             ),
                           ),
@@ -580,10 +547,10 @@ class _Tab1State extends State<Tab1> {
                               borderRadius: BorderRadius.circular(8),
                             ),
                           ),
-                          child: Text(
-                            'End',
+                          child: const Text(
+                            'จบคิว',
                             style: TextStyle(
-                              fontSize: fontSize,
+                              fontSize: 20.0,
                               color: Colors.white,
                             ),
                           ),
@@ -628,7 +595,7 @@ class _Tab1State extends State<Tab1> {
                           style: ElevatedButton.styleFrom(
                             foregroundColor: Colors.white,
                             backgroundColor:
-                                const Color.fromARGB(255, 0, 67, 122),
+                                const Color.fromRGBO(9, 159, 175, 1.0),
                             padding: EdgeInsets.symmetric(
                                 vertical: size.height * 0.00),
                             minimumSize: Size(double.infinity, buttonHeight),
@@ -640,10 +607,10 @@ class _Tab1State extends State<Tab1> {
                               borderRadius: BorderRadius.circular(8),
                             ),
                           ),
-                          child: Text(
-                            'Recall',
+                          child: const Text(
+                            'เรียกซ้ำ',
                             style: TextStyle(
-                              fontSize: fontSize,
+                              fontSize: 20.0,
                               color: Colors.white,
                             ),
                           ),
@@ -670,10 +637,10 @@ class _Tab1State extends State<Tab1> {
                               borderRadius: BorderRadius.circular(8),
                             ),
                           ),
-                          child: Text(
-                            'Hold',
+                          child: const Text(
+                            'พักคิว',
                             style: TextStyle(
-                              fontSize: fontSize,
+                              fontSize: 20.0,
                               color: Colors.white,
                             ),
                           ),
@@ -700,10 +667,10 @@ class _Tab1State extends State<Tab1> {
                               borderRadius: BorderRadius.circular(8),
                             ),
                           ),
-                          child: Text(
-                            'End',
+                          child: const Text(
+                            'จบคิว',
                             style: TextStyle(
-                              fontSize: fontSize,
+                              fontSize: 20.0,
                               color: Colors.white,
                             ),
                           ),
@@ -755,7 +722,7 @@ class _Tab1State extends State<Tab1> {
                           style: ElevatedButton.styleFrom(
                             foregroundColor: Colors.white,
                             backgroundColor:
-                                const Color.fromARGB(255, 0, 67, 122),
+                                const Color.fromRGBO(9, 159, 175, 1.0),
                             padding: EdgeInsets.symmetric(
                                 vertical: size.height * 0.00),
                             minimumSize: Size(double.infinity, buttonHeight),
@@ -767,10 +734,10 @@ class _Tab1State extends State<Tab1> {
                               borderRadius: BorderRadius.circular(8),
                             ),
                           ),
-                          child: Text(
-                            'Call',
+                          child: const Text(
+                            'เรียกคิว',
                             style: TextStyle(
-                              fontSize: fontSize,
+                              fontSize: 20.0,
                               color: Colors.white,
                             ),
                           ),
@@ -850,34 +817,30 @@ class _Tab1State extends State<Tab1> {
 
     showDialog(
       context: context,
-      barrierDismissible: false,
       builder: (BuildContext context) {
-        final size = MediaQuery.of(context).size;
-        final dialogWidth = size.width *
-            0.9; // ปรับขนาดหน้ากว้างของ dialog ให้สัมพันธ์กับหน้าจอ
-        final dialogHeight =
-            size.height * 0.8; // ปรับขนาดความสูงของ dialog ให้สัมพันธ์กับหน้าจอ
-
         return Dialog(
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(16),
           ),
           child: Container(
-            padding: const EdgeInsets.all(5.0),
-            width: dialogWidth, // ใช้ขนาดความกว้างตามที่คำนวณไว้
-            height: dialogHeight, // ใช้ขนาดความสูงตามที่คำนวณไว้
+            padding: const EdgeInsets.all(16.0),
+            constraints: BoxConstraints(
+              maxWidth: MediaQuery.of(context).size.width * 0.8,
+              maxHeight: MediaQuery.of(context).size.height * 0.9,
+            ),
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
                 Flexible(
                   child: Numpad(
-                    onSubmit: (pax, name, phone) async {
+                    onSubmit: (value) async {
                       try {
+                        SnackBarHelper.showErrorSnackBar(
+                            context, "กำลังพิมพ์บัตรคิว", "กรุณารอสักครู่ ...");
+
                         await ClassCQueue().createQueue(
                           context: context,
-                          Pax: pax,
-                          Customername: name,
-                          Customerphone: phone,
+                          Pax: value,
                           TicketKioskDetail: T1,
                           Branch: tabData.branches,
                           Kiosk: tabData.counters,
@@ -894,7 +857,6 @@ class _Tab1State extends State<Tab1> {
                       }
                     },
                     T1: T1,
-                    isChecked: isChecked ?? false,
                   ),
                 ),
               ],

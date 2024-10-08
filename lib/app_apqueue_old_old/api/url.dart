@@ -338,37 +338,45 @@ class SnackBarHelper {
       BuildContext context, String message, String queueNumber) {
     showDialog(
       context: context,
-      barrierDismissible: false,
+      barrierDismissible: false, // ปิด dialog โดยการคลิกนอก dialog
       builder: (BuildContext context) {
         return AlertDialog(
           content: Container(
+            decoration: BoxDecoration(
+              color: Colors.white,
+              border: Border.all(
+                width: 1.0,
+                color: const Color.fromARGB(255, 255, 255, 255),
+              ),
+              borderRadius: BorderRadius.circular(20),
+            ),
             width: MediaQuery.of(context).size.width * 0.8, // ขนาด dialog
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
                 Icon(
-                  Icons.warning,
+                  Icons.error_outline,
                   color: Colors.red,
-                  size: MediaQuery.of(context).size.width * 0.08,
+                  size: MediaQuery.of(context).size.width * 0.2,
                 ),
-                const SizedBox(height: 5),
+                SizedBox(height: 8),
                 Text(
                   message,
                   textAlign: TextAlign.center,
                   style: TextStyle(
-                    fontSize: MediaQuery.of(context).size.width * 0.05,
-                    color: const Color.fromARGB(255, 0, 67, 122),
+                    fontSize: MediaQuery.of(context).size.width * 0.07,
+                    color: Color.fromRGBO(9, 159, 175, 1.0),
                     fontWeight: FontWeight.bold,
                     overflow: TextOverflow.ellipsis,
                   ),
                 ),
-                const SizedBox(height: 4),
+                SizedBox(height: 8),
                 Text(
                   queueNumber,
                   textAlign: TextAlign.center,
                   style: TextStyle(
                     fontSize: MediaQuery.of(context).size.width * 0.05,
-                    color: const Color.fromARGB(255, 0, 67, 122),
+                    color: Color.fromRGBO(9, 159, 175, 1.0),
                     fontWeight: FontWeight.bold,
                     overflow: TextOverflow.ellipsis,
                   ),
@@ -385,38 +393,40 @@ class SnackBarHelper {
       BuildContext context, String message, String queueNumber) {
     final snackBar = SnackBar(
       content: Container(
-        constraints: BoxConstraints(
-          maxWidth: MediaQuery.of(context).size.width * 0.5,
-        ),
         decoration: BoxDecoration(
-          color: Colors.white,
-          border: Border.all(
-              width: 0.0, color: const Color.fromARGB(255, 255, 255, 255)),
-          borderRadius: BorderRadius.circular(20),
-        ),
-        margin: const EdgeInsets.fromLTRB(0, 0, 0, 300),
+            color: Colors.white,
+            border: Border.all(
+                width: 1.0, color: const Color.fromARGB(255, 255, 255, 255)),
+            borderRadius: BorderRadius.circular(20)),
+        margin: EdgeInsets.fromLTRB(0, 0, 0, 300),
         child: Align(
           alignment: Alignment.center,
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
+              Icon(
+                Icons.error_outline,
+                color: Colors.red,
+                size: MediaQuery.of(context).size.width * 0.2,
+              ),
+              SizedBox(height: 8),
               Text(
                 message,
                 textAlign: TextAlign.center,
                 style: TextStyle(
-                  fontSize: MediaQuery.of(context).size.width * 0.06,
-                  color: const Color.fromARGB(255, 0, 67, 122),
+                  fontSize: MediaQuery.of(context).size.width * 0.07,
+                  color: Color.fromRGBO(9, 159, 175, 1.0),
                   fontWeight: FontWeight.bold,
                   overflow: TextOverflow.ellipsis,
                 ),
               ),
-              const SizedBox(height: 8),
+              SizedBox(height: 8),
               Text(
                 queueNumber,
                 textAlign: TextAlign.center,
                 style: TextStyle(
-                  fontSize: MediaQuery.of(context).size.width * 0.055,
-                  color: const Color.fromARGB(255, 0, 67, 122),
+                  fontSize: MediaQuery.of(context).size.width * 0.05,
+                  color: Color.fromRGBO(9, 159, 175, 1.0),
                   fontWeight: FontWeight.bold,
                   overflow: TextOverflow.ellipsis,
                 ),
@@ -426,11 +436,10 @@ class SnackBarHelper {
         ),
       ),
       backgroundColor: Colors.transparent,
-      elevation: 10, // Adjusted elevation for a subtle shadow
+      elevation: 2500,
       duration: const Duration(seconds: 2),
       behavior: SnackBarBehavior.floating,
     );
-
     ScaffoldMessenger.of(context).showSnackBar(snackBar);
   }
 

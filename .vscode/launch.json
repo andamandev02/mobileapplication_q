@@ -1,0 +1,105 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "mobileapplication_q",
+            "request": "launch",
+            "type": "dart"
+        },
+        {
+            "name": "mobileapplication_q (profile mode)",
+            "request": "launch",
+            "type": "dart",
+            "flutterMode": "profile"
+        },
+        {
+            "name": "mobileapplication_q (release mode)",
+            "request": "launch",
+            "type": "dart",
+            "flutterMode": "release"
+        },
+        {
+            "name": "app_amazon",
+            "cwd": "lib\\app_amazon",
+            "request": "launch",
+            "type": "dart"
+        },
+        {
+            "name": "app_amazon (profile mode)",
+            "cwd": "lib\\app_amazon",
+            "request": "launch",
+            "type": "dart",
+            "flutterMode": "profile"
+        },
+        {
+            "name": "app_amazon (release mode)",
+            "cwd": "lib\\app_amazon",
+            "request": "launch",
+            "type": "dart",
+            "flutterMode": "release"
+        },
+        {
+            "name": "app_apqueue",
+            "cwd": "lib\\app_apqueue",
+            "request": "launch",
+            "type": "dart"
+        },
+        {
+            "name": "app_apqueue (profile mode)",
+            "cwd": "lib\\app_apqueue",
+            "request": "launch",
+            "type": "dart",
+            "flutterMode": "profile"
+        },
+        {
+            "name": "app_apqueue (release mode)",
+            "cwd": "lib\\app_apqueue",
+            "request": "launch",
+            "type": "dart",
+            "flutterMode": "release"
+        },
+        {
+            "name": "app_apqueue_old_old",
+            "cwd": "lib\\app_apqueue_old_old",
+            "request": "launch",
+            "type": "dart"
+        },
+        {
+            "name": "app_apqueue_old_old (profile mode)",
+            "cwd": "lib\\app_apqueue_old_old",
+            "request": "launch",
+            "type": "dart",
+            "flutterMode": "profile"
+        },
+        {
+            "name": "app_apqueue_old_old (release mode)",
+            "cwd": "lib\\app_apqueue_old_old",
+            "request": "launch",
+            "type": "dart",
+            "flutterMode": "release"
+        },
+        {
+            "name": "app_somboon",
+            "cwd": "lib\\app_somboon",
+            "request": "launch",
+            "type": "dart"
+        },
+        {
+            "name": "app_somboon (profile mode)",
+            "cwd": "lib\\app_somboon",
+            "request": "launch",
+            "type": "dart",
+            "flutterMode": "profile"
+        },
+        {
+            "name": "app_somboon (release mode)",
+            "cwd": "lib\\app_somboon",
+            "request": "launch",
+            "type": "dart",
+            "flutterMode": "release"
+        }
+    ]
+}

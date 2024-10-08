@@ -36,24 +36,32 @@ android {
             // Signing with the debug keys for now, so `flutter run --release` works.
             signingConfig = signingConfigs.debug
         }
+        buildTypes {
+            debug {
+                applicationIdSuffix ".debug"
+            }
+            release {
+                signingConfig signingConfigs.debug
+            }
+        }
     }
 
-      flavorDimensions "version"
+    flavorDimensions "version"
     productFlavors {
         app_somboon {
-            applicationId "com.yourcompany.app_somboon" 
+            applicationId "com.example.mobileapplication_q.app_somboon" 
             versionNameSuffix "-somboon"
         }
         app_apqueue {
-            applicationId "com.yourcompany.app_apqueue" 
+            applicationId "com.example.mobileapplication_q.app_apqueue" 
             versionNameSuffix "-apqueue"
         }
         app_amazon {
-            applicationId "com.yourcompany.app_amazon" 
+            applicationId "com.example.mobileapplication_q.app_amazon" 
             versionNameSuffix "-amazon"
         }
         app_gopizza {
-            applicationId "com.yourcompany.app_gopizza" 
+            applicationId "com.example.mobileapplication_q.app_gopizza" 
             versionNameSuffix "-gopizza"
         }
     }

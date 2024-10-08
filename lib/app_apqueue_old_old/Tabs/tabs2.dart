@@ -1,15 +1,15 @@
 import 'package:flutter/material.dart';
-import '../cancel_screen.dart';
-import '../loadingsreen.dart';
 import 'TabData.dart';
 import '../api/queue/crud.dart';
 import '../api/queue/queuelist.dart';
 import '../api/time.dart';
 import '../api/url.dart';
+import '../cancel_screen.dart';
+import '../loadingsreen.dart';
 import '../api/brach/brachlist.dart';
 
-class Tab3 extends StatefulWidget {
-  const Tab3({
+class Tab2 extends StatefulWidget {
+  const Tab2({
     super.key,
     required this.tabController,
     required this.filteredQueues1Notifier,
@@ -18,14 +18,14 @@ class Tab3 extends StatefulWidget {
   });
 
   @override
-  _Tab3State createState() => _Tab3State();
+  _Tab2State createState() => _Tab2State();
   final TabController tabController;
   final ValueNotifier<List<Map<String, dynamic>>> filteredQueues1Notifier;
   final ValueNotifier<List<Map<String, dynamic>>> filteredQueues3Notifier;
   final ValueNotifier<List<Map<String, dynamic>>> filteredQueuesANotifier;
 }
 
-class _Tab3State extends State<Tab3> {
+class _Tab2State extends State<Tab2> {
   late List<Map<String, dynamic>> queues = [];
   List<Map<String, dynamic>> filteredQueues1 = [];
   List<Map<String, dynamic>> filteredQueues3 = [];
@@ -34,12 +34,6 @@ class _Tab3State extends State<Tab3> {
   final TextEditingController _searchController = TextEditingController();
   String _searchQueueNo = '';
   String selectedFilter = '';
-
-  int currentPage = 1;
-  bool isLoading = false;
-  bool hasMoreData = true;
-  final int pageSize = 10;
-  bool isLoadingMore = false;
 
   @override
   void didChangeDependencies() {
@@ -57,33 +51,31 @@ class _Tab3State extends State<Tab3> {
     super.dispose();
   }
 
-  Future<void> fetchSearchQueue(String branchId, String queueNo, String filter,
-      {int page = 10}) async {
-    if (isLoading || !hasMoreData) return; // Prevent multiple calls
-    isLoadingMore = true; // Set loading more flag
-    isLoading = true;
+  Future<void> fetchSearchQueue(
+      String branchId, String queueNo, String filter) async {
     await ClassQueue.queuelist(
       context: context,
       branchid: branchId,
       onSearchQueueLoaded: (loadedSearchQueue) {
         if (mounted) {
           setState(() {
-            if (loadedSearchQueue.isEmpty) {
-              hasMoreData = false; // No more data available
-            } else {
-              queues.addAll(loadedSearchQueue);
-            }
-
             queues = loadedSearchQueue.where((item) {
+              //   // กรองคิวตาม queueNo โดยไม่สนใจตัวพิมพ์ใหญ่พิมพ์เล็ก
+              //   return item['queue_no']
+              //       .toLowerCase()
+              //       .contains(queueNo.toLowerCase());
+              // }).toList();
+
               final queueNoMatches = item['queue_no']
                   .toLowerCase()
                   .contains(queueNo.toLowerCase());
+
               final filterMatches = filter == 'clear' ||
                   item['queue_no'].toLowerCase().contains(filter.toLowerCase());
+
               return queueNoMatches && filterMatches;
             }).toList();
 
-            // Filter the queues as before
             filteredQueues1 = queues
                 .where((queue) => queue['service_status_id'] == '1')
                 .toList();
@@ -92,15 +84,11 @@ class _Tab3State extends State<Tab3> {
                 .toList();
             filteredQueuesA = queues;
 
-            // Notify listeners
             widget.filteredQueues1Notifier.value = filteredQueues1;
             widget.filteredQueues3Notifier.value = filteredQueues3;
             widget.filteredQueuesANotifier.value = filteredQueuesA;
-
-            isLoadingMore = false;
           });
         }
-        isLoading = false;
       },
     );
   }
@@ -118,10 +106,6 @@ class _Tab3State extends State<Tab3> {
 
   @override
   Widget build(BuildContext context) {
-    final size = MediaQuery.of(context).size;
-    final buttonHeight = size.height * 0.06;
-    final iconSize = size.height * 0.05;
-    final fontSize = size.height * 0.02;
     return Column(
       children: [
         Padding(
@@ -132,14 +116,14 @@ class _Tab3State extends State<Tab3> {
                 child: TextField(
                   controller: _searchController,
                   decoration: InputDecoration(
-                    labelText: 'พิมพ์เพื่อค้นหา Q NO | Search Q No',
-                    labelStyle: TextStyle(
-                      color: const Color.fromARGB(255, 0, 67, 122),
-                      fontSize: fontSize,
+                    labelText: 'พิมพ์เพื่อค้นหา QUEUE NO',
+                    labelStyle: const TextStyle(
+                      color: Color.fromRGBO(9, 159, 175, 1.0),
+                      fontSize: 25.0,
                     ),
                     border: OutlineInputBorder(
                       borderRadius:
-                          BorderRadius.circular(50.0), // กำหนดรัศมีของขอบมน
+                          BorderRadius.circular(12.0), // กำหนดรัศมีของขอบมน
                       borderSide: const BorderSide(
                         color: Color.fromRGBO(9, 159, 175, 1.0), // สีของเส้นขอบ
                         width: 2.0, // ความหนาของเส้นขอบ
@@ -151,10 +135,10 @@ class _Tab3State extends State<Tab3> {
                       icon: Icon(
                         _searchController.text.isNotEmpty
                             ? Icons.clear
-                            : Icons.search,
+                            : Icons.search, // เปลี่ยนไอคอนตามค่าของ TextField
                         color: _searchController.text.isNotEmpty
                             ? const Color.fromRGBO(255, 0, 0, 1)
-                            : const Color.fromARGB(255, 0, 67, 122),
+                            : const Color.fromRGBO(9, 159, 175, 1.0),
                       ),
                       onPressed: () {
                         _searchController.clear();
@@ -172,16 +156,14 @@ class _Tab3State extends State<Tab3> {
                       },
                     ),
                   ),
-                  style: TextStyle(
-                    fontSize: fontSize,
-                    color: const Color.fromARGB(255, 0, 67, 122),
-                  ),
+                  style: const TextStyle(
+                      fontSize: 25, color: Color.fromRGBO(9, 159, 175, 1.0)),
                   onChanged: _onSearchChanged, // เรียกใช้เมื่อพิมพ์
                 ),
               ),
               Center(
                 child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 10.0),
+                  padding: const EdgeInsets.symmetric(horizontal: 40.0),
                   child: PopupMenuButton<String>(
                     onSelected: (String value) {
                       setState(() {
@@ -190,56 +172,56 @@ class _Tab3State extends State<Tab3> {
                     },
                     itemBuilder: (BuildContext context) {
                       return [
-                        PopupMenuItem<String>(
+                        const PopupMenuItem<String>(
                           value: 'a',
                           child: Text(
                             '     A',
                             style: TextStyle(
-                              fontSize: fontSize,
+                              fontSize: 30.0,
                               color: Colors.white,
                             ),
                             textAlign: TextAlign.end,
                           ),
                         ),
-                        PopupMenuItem<String>(
+                        const PopupMenuItem<String>(
                           value: 'b',
                           child: Text(
                             '     B',
                             style: TextStyle(
-                              fontSize: fontSize,
+                              fontSize: 30.0,
                               color: Colors.white,
                             ),
                             textAlign: TextAlign.end,
                           ),
                         ),
-                        PopupMenuItem<String>(
+                        const PopupMenuItem<String>(
                           value: 'c',
                           child: Text(
                             '     C',
                             style: TextStyle(
-                              fontSize: fontSize,
+                              fontSize: 30.0,
                               color: Colors.white,
                             ),
                             textAlign: TextAlign.end,
                           ),
                         ),
-                        PopupMenuItem<String>(
+                        const PopupMenuItem<String>(
                           value: 'd',
                           child: Text(
                             '     D',
                             style: TextStyle(
-                              fontSize: fontSize,
+                              fontSize: 30.0,
                               color: Colors.white,
                             ),
                             textAlign: TextAlign.end,
                           ),
                         ),
-                        PopupMenuItem<String>(
+                        const PopupMenuItem<String>(
                           value: 'clear',
                           child: Text(
-                            '   clear',
+                            ' เคลีย',
                             style: TextStyle(
-                              fontSize: fontSize,
+                              fontSize: 30.0,
                               color: Colors.white,
                             ),
                             textAlign: TextAlign.end,
@@ -251,115 +233,44 @@ class _Tab3State extends State<Tab3> {
                       Icons.filter_list,
                       color: Color.fromARGB(255, 255, 255, 255),
                     ),
-                    color: const Color.fromARGB(255, 0, 67, 122),
+                    color: const Color.fromRGBO(9, 159, 175, 1.0),
                   ),
                 ),
               )
             ],
           ),
         ),
-        // Expanded(
-        //   child: queues.any((item) => item['service_status_id'] == '3')
-        //       ? ListView.builder(
-        //           itemCount: queues.length,
-        //           itemBuilder: (context, index) {
-        //             final item = queues[index];
-        //             if (item['service_status_id'] == '3') {
-        //               final tabData = TabData.of(context);
-        //               final branchId =
-        //                   tabData?.branches['branch_id'].toString() ?? '0';
-        //               return QueueItemWidget(
-        //                 item: item,
-        //                 buttonHeight: MediaQuery.of(context).size.height * 0.06,
-        //                 size: MediaQuery.of(context).size,
-        //                 branchId: branchId,
-        //                 onQueueUpdated: fetchSearchQueue,
-        //                 tabController: widget.tabController,
-        //                 searchQueueNo: _searchQueueNo,
-        //               );
-        //             }
-        //             return const SizedBox.shrink();
-        //           },
-        //         )
-        //       // : const Center(
-        //       //     child: Text(
-        //       //       'ไม่มีรายการคิวรอ',
-        //       //       style: TextStyle(fontSize: 40.0, color: Colors.white),
-        //       //     ),
-        //       //   ),
-        //       // : const Center(
-        //       //     child: CircularProgressIndicator(),
-        //       //   ),
-        //       : Center(
-        //           child: Text(
-        //             'ไม่มีรายการ | No Data',
-        //             style: TextStyle(
-        //               fontSize: fontSize,
-        //               // fontWeight: FontWeight.bold,
-        //               color: Colors.white,
-        //             ), // สามารถปรับแต่ง style ได้ตามต้องการ
-        //           ),
-        //         ),
-        // ),
         Expanded(
-          child: queues.isNotEmpty
-              ? NotificationListener<ScrollNotification>(
-                  onNotification: (ScrollNotification scrollInfo) {
-                    if (!isLoading &&
-                        hasMoreData &&
-                        scrollInfo.metrics.pixels ==
-                            scrollInfo.metrics.maxScrollExtent) {
-                      currentPage++;
-                      fetchSearchQueue(
-                        TabData.of(context)!.branches['branch_id'].toString(),
-                        _searchQueueNo,
-                        selectedFilter,
-                        page: currentPage,
+          child: queues.any((item) => item['service_status_id'] == '1')
+              ? ListView.builder(
+                  itemCount: queues.length,
+                  itemBuilder: (context, index) {
+                    final item = queues[index];
+                    if (item['service_status_id'] == '1') {
+                      final tabData = TabData.of(context);
+                      final branchId =
+                          tabData?.branches['branch_id'].toString() ?? '0';
+                      return QueueItemWidget(
+                        item: item,
+                        buttonHeight: MediaQuery.of(context).size.height * 0.06,
+                        size: MediaQuery.of(context).size,
+                        branchId: branchId,
+                        onQueueUpdated: fetchSearchQueue,
+                        tabController: widget.tabController,
+                        searchQueueNo: _searchQueueNo,
                       );
                     }
-                    return true;
+                    return const SizedBox.shrink();
                   },
-                  child: ListView.builder(
-                    itemCount: queues.length +
-                        (isLoadingMore
-                            ? 1
-                            : 0), // Add one for loading indicator
-                    itemBuilder: (context, index) {
-                      if (index < queues.length) {
-                        // Render actual queue items
-                        final item = queues[index];
-                        if (item['service_status_id'] == '3') {
-                          final tabData = TabData.of(context);
-                          final branchId =
-                              tabData?.branches['branch_id'].toString() ?? '0';
-                          return QueueItemWidget(
-                            item: item,
-                            buttonHeight:
-                                MediaQuery.of(context).size.height * 0.06,
-                            size: MediaQuery.of(context).size,
-                            branchId: branchId,
-                            onQueueUpdated: fetchSearchQueue,
-                            tabController: widget.tabController,
-                            searchQueueNo: _searchQueueNo,
-                          );
-                        }
-                        return const SizedBox.shrink();
-                      } else {
-                        // Show loading indicator when loading more data
-                        return Center(
-                          child: CircularProgressIndicator(),
-                        );
-                      }
-                    },
-                  ),
                 )
-              : Center(
+              : const Center(
                   child: Text(
-                    'ไม่มีรายการ | No Data',
+                    'ไม่มีรายการ',
                     style: TextStyle(
-                      fontSize: fontSize,
+                      fontSize: 20,
+                      // fontWeight: FontWeight.bold,
                       color: Colors.white,
-                    ),
+                    ), // สามารถปรับแต่ง style ได้ตามต้องการ
                   ),
                 ),
         ),
@@ -398,102 +309,76 @@ class _QueueItemWidgetState extends State<QueueItemWidget> {
 
   @override
   Widget build(BuildContext context) {
-    final size = MediaQuery.of(context).size;
-    final buttonHeight = size.height * 0.06;
-    final buttonWidth = size.width * 0.2;
-    final fontSize = size.height * 0.02;
+    final buttonHeight = 55.0; // ใช้ค่าคงที่เพื่อความสูงของปุ่ม
+
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 5.0, horizontal: 8.0),
+      padding: const EdgeInsets.symmetric(vertical: 5.0, horizontal: 5.0),
       child: Container(
-        padding: const EdgeInsets.all(2.0),
+        padding: const EdgeInsets.all(12.0),
         decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.circular(10.0),
           border: Border.all(color: Colors.white, width: 1.0),
         ),
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
-                Expanded(
-                  flex: 1,
-                  child: _buildText(
-                    "${widget.item['queue_no']}",
-                    fontSize * 1.5,
-                    const Color.fromARGB(255, 0, 67, 122),
-                  ),
+                _buildText(
+                  widget.item['queue_no'],
+                  40.0,
+                  const Color.fromRGBO(9, 159, 175, 1.0),
                 ),
-                Expanded(
-                  flex: 2,
-                  child: _buildText(
-                    _formatName(
-                      "N:${widget.item['customer_name'] ?? 'NoName'}",
-                    ),
-                    fontSize,
-                    const Color.fromARGB(255, 0, 67, 122),
-                  ),
+                const SizedBox(width: 20),
+                _buildText(
+                  "จำนวน\n${widget.item['number_pax']} PAX",
+                  20.0,
+                  const Color.fromARGB(255, 144, 148, 148),
                 ),
-                Expanded(
-                  flex: 2,
-                  child: _buildText(
-                    "T:${widget.item['phone_number'] ?? 'NoPhone'}",
-                    fontSize,
-                    const Color.fromARGB(255, 0, 67, 122),
-                  ),
+                const SizedBox(width: 20),
+                _buildText(
+                  "ออกคิว\n${formatQueueTime(widget.item['queue_time'])}",
+                  20.0,
+                  const Color.fromARGB(255, 144, 148, 148),
                 ),
+                const SizedBox(width: 20),
+                _buildText(
+                  "เวลารอ\n${calculateTimeDifference(widget.item['queue_time'])}",
+                  20.0,
+                  const Color.fromARGB(255, 144, 148, 148),
+                ),
+                const SizedBox(width: 20),
+                _buildElevatedButton(
+                    'จบคิว',
+                    const Color.fromARGB(255, 255, 0, 0),
+                    buttonHeight,
+                    _endQueue),
+                const SizedBox(width: 20),
+                _buildElevatedButton(
+                    'เรียกคิว',
+                    const Color.fromRGBO(9, 159, 175, 1.0),
+                    buttonHeight,
+                    _callQueue),
               ],
             ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Expanded(
-                  flex: 1,
-                  child: _buildText(
-                    "Number\n${widget.item['number_pax']} PAX",
-                    fontSize,
-                    const Color.fromARGB(255, 144, 148, 148),
-                  ),
-                ),
-                const SizedBox(width: 5),
-                Expanded(
-                  flex: 1,
-                  child: _buildText(
-                    "Queue\n${formatQueueTime(widget.item['queue_time'])}",
-                    fontSize,
-                    const Color.fromARGB(255, 144, 148, 148),
-                  ),
-                ),
-                const SizedBox(width: 5),
-                Expanded(
-                  flex: 1,
-                  child: _buildText(
-                    "Hold\n${calculateTimeDifference(widget.item['hold_time'])}",
-                    fontSize,
-                    const Color.fromARGB(255, 144, 148, 148),
-                  ),
-                ),
-                const SizedBox(width: 5),
-                Expanded(
-                  flex: 1,
-                  child: _buildElevatedButton(
-                      'End',
-                      const Color.fromARGB(255, 255, 0, 0),
-                      buttonHeight,
-                      _endQueue),
-                ),
-                const SizedBox(width: 5),
-                Expanded(
-                  flex: 1,
-                  child: _buildElevatedButton(
-                      'Call',
-                      const Color.fromARGB(255, 0, 67, 122),
-                      buttonHeight,
-                      _callQueue),
-                ),
-              ],
-            ),
+            // Row(
+            //   mainAxisAlignment: MainAxisAlignment.center,
+            //   children: [
+            //     _buildElevatedButton(
+            //         'จบคิว',
+            //         const Color.fromARGB(255, 255, 0, 0),
+            //         buttonHeight,
+            //         _endQueue),
+            //     const SizedBox(width: 8),
+            //     _buildElevatedButton(
+            //         'เรียกคิว',
+            //         const Color.fromRGBO(9, 159, 175, 1.0),
+            //         buttonHeight,
+            //         _callQueue),
+            //   ],
+            // ),
           ],
         ),
       ),
@@ -516,30 +401,12 @@ class _QueueItemWidgetState extends State<QueueItemWidget> {
     );
   }
 
-  String _formatName(String fullName) {
-    final nameParts = fullName.split(' '); // แยกชื่อและนามสกุล
-    if (nameParts.length < 2)
-      return fullName; // ถ้ามีแค่ชื่อเดียว ให้ส่งคืนตามปกติ
-
-    final firstName = nameParts[0]; // ชื่อ
-    final lastName = nameParts.sublist(1).join(' '); // นามสกุล
-
-    // เช็คความยาวของนามสกุล
-    if (lastName.length > 3) {
-      return '$firstName ${lastName.substring(0, 3)}...'; // ตัดและเพิ่ม ...
-    }
-    return fullName; // ส่งคืนชื่อทั้งหมดถ้านามสกุลไม่เกิน 3 ตัว
-  }
-
   Widget _buildElevatedButton(
     String label,
     Color color,
     double height,
     Future<void> Function(BuildContext) onPressed,
   ) {
-    final size = MediaQuery.of(context).size;
-    final fontSize = size.height * 0.02;
-
     return Expanded(
       child: SizedBox(
         height: height,
@@ -557,8 +424,8 @@ class _QueueItemWidgetState extends State<QueueItemWidget> {
           ),
           child: Text(
             label,
-            style: TextStyle(
-              fontSize: fontSize,
+            style: const TextStyle(
+              fontSize: 20,
             ),
           ),
         ),
@@ -592,19 +459,21 @@ class _QueueItemWidgetState extends State<QueueItemWidget> {
               ),
             );
 
-            // SnackBarHelper.showSaveSnackBar(
-            //   context,
-            //   [widget.item],
-            //   Reason,
-            // );
-
-            await Future.delayed(const Duration(seconds: 2));
             await widget.onQueueUpdated(
                 widget.branchId, widget.searchQueueNo, '');
           },
         ),
       ),
     );
+
+    // SnackBarHelper.showSaveSnackBar(
+    //   context,
+    //   [widget.item],
+    //   Reason,
+    // );
+
+    // await Future.delayed(const Duration(seconds: 2));
+    // await widget.onQueueUpdated(widget.branchId, widget.searchQueueNo, '');
   }
 
   Future<void> _callQueue(BuildContext context) async {
@@ -613,14 +482,13 @@ class _QueueItemWidgetState extends State<QueueItemWidget> {
       MaterialPageRoute(
         builder: (context) => LoadingScreen(
           onComplete: () async {
-            await ClassCQueue().UpdateQueue(
+            await ClassCQueue().CallQueue(
               context: context,
               SearchQueue: [widget.item],
-              StatusQueue: 'Calling',
-              StatusQueueNote: '',
             );
             await Future.delayed(const Duration(seconds: 1));
             Navigator.of(context).pop();
+
             // await widget.onQueueUpdated(widget.branchId, widget.searchQueueNo);
             widget.tabController.animateTo(0);
           },

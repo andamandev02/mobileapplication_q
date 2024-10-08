@@ -99,11 +99,6 @@ class _TabSState extends State<TabS> with SingleTickerProviderStateMixin {
 
   @override
   Widget build(BuildContext context) {
-    final size = MediaQuery.of(context).size;
-    final buttonHeight = size.height * 0.06;
-    final iconSize = size.height * 0.05;
-    final fontSize = size.height * 0.02;
-
     return DefaultTabController(
       length: 4,
       child: TabData(
@@ -114,9 +109,9 @@ class _TabSState extends State<TabS> with SingleTickerProviderStateMixin {
           backgroundColor: const Color.fromARGB(255, 0, 67, 122),
           appBar: AppBar(
             title: Text(
-              'Branch ' + branchName + '-' + branchNameC,
-              style: TextStyle(
-                fontSize: fontSize,
+              '  Branch  ' + branchName + '  - ' + branchNameC,
+              style: const TextStyle(
+                fontSize: 25.0,
                 color: Colors.white,
               ),
             ),
@@ -131,27 +126,30 @@ class _TabSState extends State<TabS> with SingleTickerProviderStateMixin {
                   _showClearQueue(context);
                 },
               ),
+              // Text(
+              //   CountersDetail,
+              //   style: TextStyle(color: Colors.white, fontSize: 20.0),
+              // ),
             ],
             bottom: TabBar(
               controller: _tabController,
-              // isScrollable: true,
-              labelStyle: TextStyle(
-                fontSize: fontSize,
+              labelStyle: const TextStyle(
+                fontSize: 16.0,
                 fontWeight: FontWeight.bold,
               ),
-              unselectedLabelStyle: TextStyle(
-                fontSize: fontSize,
+              unselectedLabelStyle: const TextStyle(
+                fontSize: 16.0,
                 fontWeight: FontWeight.normal,
               ),
               tabs: [
                 ValueListenableBuilder<List<Map<String, dynamic>>>(
                   valueListenable: filteredQueuesANotifier,
                   builder: (context, filteredQueuesA, child) {
-                    return Tab(
+                    return const Tab(
                       child: Text(
                         'Call',
                         style: TextStyle(
-                          fontSize: fontSize,
+                          fontSize: 18.0,
                           color: Colors.white,
                         ),
                         textAlign: TextAlign.center,
@@ -164,9 +162,9 @@ class _TabSState extends State<TabS> with SingleTickerProviderStateMixin {
                   builder: (context, filteredQueues1, child) {
                     return Tab(
                       child: Text(
-                        'Wait (${filteredQueues1.length})',
-                        style: TextStyle(
-                          fontSize: fontSize,
+                        'Wait\n(${filteredQueues1.length})',
+                        style: const TextStyle(
+                          fontSize: 18.0,
                           color: Colors.white,
                         ),
                         textAlign: TextAlign.center,
@@ -179,9 +177,9 @@ class _TabSState extends State<TabS> with SingleTickerProviderStateMixin {
                   builder: (context, filteredQueues3, child) {
                     return Tab(
                       child: Text(
-                        'Hold (${filteredQueues3.length})',
-                        style: TextStyle(
-                          fontSize: fontSize,
+                        'Hold\n(${filteredQueues3.length})',
+                        style: const TextStyle(
+                          fontSize: 18.0,
                           color: Colors.white,
                         ),
                         textAlign: TextAlign.center,
@@ -194,9 +192,9 @@ class _TabSState extends State<TabS> with SingleTickerProviderStateMixin {
                   builder: (context, filteredQueuesA, child) {
                     return Tab(
                       child: Text(
-                        'Total (${filteredQueuesA.length})',
-                        style: TextStyle(
-                          fontSize: fontSize,
+                        'All\n(${filteredQueuesA.length})',
+                        style: const TextStyle(
+                          fontSize: 18.0,
                           color: Colors.white,
                         ),
                         textAlign: TextAlign.center,
@@ -239,43 +237,39 @@ class _TabSState extends State<TabS> with SingleTickerProviderStateMixin {
   void _showClearQueue(BuildContext context) {
     final size = MediaQuery.of(context).size;
     final buttonHeight = size.height * 0.05; // 5% ของความสูงหน้าจอ
-    final fontSize = size.height * 0.02;
+    final buttonWidth = size.width * 0.3; // 30% ของความกว้างหน้าจอ
 
     showDialog(
       context: context,
       barrierDismissible: false,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Row(
+          title: const Row(
             children: [
               Icon(
                 Icons.warning,
                 color: Colors.orange,
-                size: fontSize * 1.5, // เพิ่มขนาดไอคอนให้เหมาะสมกับฟอนต์
+                size: 30.0,
               ),
-              SizedBox(
-                  width: size.width * 0.02), // ปรับขนาดให้สัมพันธ์กับหน้าจอ
-              Flexible(
-                // ใช้ Flexible เพื่อปรับขนาดข้อความให้เหมาะสมกับพื้นที่ที่มี
-                child: Text(
-                  'ยืนยันการลบ',
-                  style: TextStyle(
-                    fontSize: fontSize,
-                  ),
+              SizedBox(width: 10.0),
+              Text(
+                'ยืนยันการลบ',
+                style: TextStyle(
+                  fontSize: 20.0, // ขนาดตัวอักษรของ title
                 ),
               ),
             ],
           ),
-          content: Text(
+          content: const Text(
             'คุณแน่ใจว่าต้องการลบคิวทั้งหมดหรือไม่?\n(ถ้าลบแล้วจะไม่สามารถนำกลับมาได้อีก)',
             style: TextStyle(
-              fontSize: fontSize,
+              fontSize: 18.0,
             ),
             textAlign: TextAlign.center,
           ),
           contentPadding: EdgeInsets.symmetric(
             vertical: size.height * 0.02,
-            horizontal: size.width * 0.0001,
+            horizontal: size.width * 0.05,
           ),
           actions: <Widget>[
             Row(
@@ -291,21 +285,21 @@ class _TabSState extends State<TabS> with SingleTickerProviderStateMixin {
                       backgroundColor: const Color.fromARGB(255, 255, 0, 0),
                       padding:
                           EdgeInsets.symmetric(vertical: size.height * 0.02),
+                      minimumSize: Size(buttonWidth, buttonHeight),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(8),
                       ),
                     ),
-                    child: Text(
-                      'ปิด|CLOSE',
+                    child: const Text(
+                      'ปิด | CANCEL',
                       style: TextStyle(
-                        fontSize: fontSize,
+                        fontSize: 18.0, // ขนาดตัวอักษรของปุ่ม
                       ),
                     ),
                   ),
                 ),
-                SizedBox(width: size.width * 0.01), // ปรับระยะห่างตามขนาดหน้าจอ
+                const SizedBox(width: 10), // เพิ่มระยะห่างระหว่างปุ่ม
                 Expanded(
-                  // ใช้ Expanded เพื่อทำให้ปุ่มมีขนาดเท่ากัน
                   child: ElevatedButton(
                     onPressed: () async {
                       await ClassCQueue().clearQueue(
@@ -318,14 +312,15 @@ class _TabSState extends State<TabS> with SingleTickerProviderStateMixin {
                       backgroundColor: const Color.fromRGBO(9, 159, 175, 1.0),
                       padding:
                           EdgeInsets.symmetric(vertical: size.height * 0.02),
+                      minimumSize: Size(buttonWidth, buttonHeight),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(8),
                       ),
                     ),
-                    child: Text(
-                      'ยืนยัน|SUBMIT',
+                    child: const Text(
+                      'ยืนยันการลบ | SUBMIT',
                       style: TextStyle(
-                        fontSize: fontSize,
+                        fontSize: 18.0, // ขนาดตัวอักษรของปุ่ม
                       ),
                     ),
                   ),

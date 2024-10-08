@@ -21,6 +21,7 @@ class _BranchListSState extends State<BranchListS> {
   Future<void> fetchBranchList() async {
     ClassBranch.branchlist(
       context: context,
+      // ignore: non_constant_identifier_names
       onBranchListLoaded: (LoadingBranchList) {
         setState(() {
           _branches = LoadingBranchList;
@@ -31,16 +32,17 @@ class _BranchListSState extends State<BranchListS> {
 
   @override
   Widget build(BuildContext context) {
+    // รับขนาดหน้าจอ
     final size = MediaQuery.of(context).size;
-    final buttonHeight = size.height * 0.06;
-    final buttonWidth = size.width * 0.2;
-    final fontSize = size.height * 0.02;
+    final buttonHeight = size.height * 0.06; // 6% ของความสูงหน้าจอ
+    final buttonWidth = size.width * 0.2; // 20% ของความกว้างหน้าจอ
+    final fontSize = size.height * 0.03; // ปรับขนาดฟอนต์ตามความสูงของหน้าจอ
 
     return Scaffold(
       backgroundColor: const Color.fromARGB(255, 0, 67, 122),
       appBar: AppBar(
         title: Text(
-          'เลือกสาขา | Select Branch',
+          'Select Branch',
           style: TextStyle(
             fontSize: fontSize,
             color: Colors.white,
@@ -55,10 +57,14 @@ class _BranchListSState extends State<BranchListS> {
         padding: const EdgeInsets.all(16.0),
         child: LayoutBuilder(
           builder: (context, constraints) {
-            final double buttonWidth = constraints.maxWidth;
-            final double buttonHeight = size.height * 0.08;
-            final double iconSize = size.height * 0.03;
-            final double fontSize = size.height * 0.02;
+            final double buttonWidth =
+                constraints.maxWidth; // ปรับขนาดตามความกว้างของหน้าจอ
+            final double buttonHeight =
+                size.height * 0.08; // ปรับขนาดปุ่มตามความสูงหน้าจอ
+            final double iconSize =
+                size.height * 0.05; // ปรับขนาดไอคอนตามขนาดหน้าจอ
+            final double fontSize =
+                size.height * 0.03; // ปรับขนาดฟอนต์ตามขนาดหน้าจอ
 
             return ListView.builder(
               itemCount: _branches.length,
@@ -80,33 +86,37 @@ class _BranchListSState extends State<BranchListS> {
                         );
                       },
                       style: ElevatedButton.styleFrom(
-                        foregroundColor: const Color.fromARGB(255, 0, 67, 122),
+                        foregroundColor: const Color.fromRGBO(9, 159, 175, 1.0),
                         backgroundColor:
                             const Color.fromARGB(255, 255, 255, 255),
                         padding: const EdgeInsets.symmetric(
-                          vertical: 12.0,
+                          vertical:
+                              12.0, // สามารถปรับลดให้สัมพันธ์กับขนาดปุ่มได้
                         ),
                         minimumSize: Size(buttonWidth, buttonHeight),
                         shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(50),
+                          borderRadius: BorderRadius.circular(
+                              50), // ปรับมุมให้โค้งตามดีไซน์
                         ),
                       ),
                       child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        mainAxisAlignment: MainAxisAlignment
+                            .spaceBetween, // จัดตำแหน่งให้ข้อความชิดซ้ายและไอคอนชิดขวา
                         children: [
-                          const SizedBox(width: 10),
+                          const SizedBox(width: 40), // เพิ่มพื้นที่ว่างด้านหน้า
                           Expanded(
                             child: Text(
                               branchName,
                               style: TextStyle(
-                                fontSize: fontSize,
+                                fontSize:
+                                    fontSize, // ปรับขนาดฟอนต์ตามขนาดหน้าจอ
                               ),
                             ),
                           ),
                           Icon(
                             Icons.arrow_forward,
                             size: iconSize,
-                            color: const Color.fromARGB(255, 0, 67, 122),
+                            color: const Color.fromRGBO(9, 159, 175, 1.0),
                           ),
                         ],
                       ),

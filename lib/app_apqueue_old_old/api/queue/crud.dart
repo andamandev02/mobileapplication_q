@@ -60,8 +60,6 @@ class ClassCQueue {
   Future<void> createQueue({
     required BuildContext context,
     required String Pax,
-    required String Customername,
-    required String Customerphone,
     required Map<String, dynamic> TicketKioskDetail,
     required Map<String, dynamic> Branch,
     required Map<String, dynamic> Kiosk,
@@ -72,8 +70,6 @@ class ClassCQueue {
     try {
       var body = jsonEncode({
         'Pax': Pax,
-        'Customername': Customername,
-        'Customerphone': Customerphone,
         'TicketKioskDetail': jsonEncode(TicketKioskDetail),
         'Branch': jsonEncode(Branch),
         'Kiosk': jsonEncode(Kiosk),
@@ -159,9 +155,8 @@ class ClassCQueue {
         // });
         // }
       } else {
-        String ToMsg = "เกิดปัญหาทางเทคนิค\nA technical problem occurred.";
-        String queueNumber =
-            "กรุณาโปรดแจ้งพนักงาน\nPlease please inform the staff.";
+        String ToMsg = "เกิดปัญหาทางเทคนิค";
+        String queueNumber = "กรุณาโปรดแจ้งพนักงาน";
         SnackBarHelper.showErrorDialog(context, ToMsg, queueNumber);
       }
     } catch (e) {
@@ -220,14 +215,13 @@ class ClassCQueue {
           });
         }
 
-        String ToMsg = "ทำการเคลียคิว\nClear the queue";
-        String queueNumber = "เรียบร้อยแล้ว\nfinished";
+        String ToMsg = "ทำการเคลียคิว";
+        String queueNumber = "เรียบร้อยแล้ว";
         SnackBarHelper.showErrorDialog(context, ToMsg, queueNumber);
         Navigator.of(context).pop();
       } else {
-        String ToMsg = "เกิดปัญหาทางเทคนิค\nA technical problem occurred.";
-        String queueNumber =
-            "กรุณาโปรดแจ้งพนักงาน\nPlease please inform the staff.";
+        String ToMsg = "เกิดปัญหาทางเทคนิค";
+        String queueNumber = "กรุณาโปรดแจ้งพนักงาน";
         SnackBarHelper.showErrorDialog(context, ToMsg, queueNumber);
       }
     } catch (e) {
@@ -274,19 +268,19 @@ class ClassCQueue {
 
         if (StatusQueue == 'Calling') {
           ToSocket = CALL;
-          ToMsg = "กำลังเรียกคิว\nCall Queue";
+          ToMsg = "กำลังเรียกคิว";
         } else if (StatusQueue == 'Holding') {
           ToSocket = HOLD;
-          ToMsg = "กำลังพักคิว\nHold Queue";
+          ToMsg = "กำลังพักคิว";
         } else if (StatusQueue == 'Ending') {
           ToSocket = FINISH;
-          ToMsg = "กำลังยกเลิกคิว\nCancel Queue";
+          ToMsg = "กำลังยกเลิกคิว";
         } else if (StatusQueue == 'Finishing') {
           ToSocket = FINISH;
-          ToMsg = "กำลังจบคิว\nEnd Queue";
+          ToMsg = "กำลังจบคิว";
         } else if (StatusQueue == 'Recalling') {
           ToSocket = CALL;
-          ToMsg = "กำลังเรียกคิวซ้ำ\nRecalling";
+          ToMsg = "กำลังเรียกคิวซ้ำ";
         }
 
         String queueNumber = "${jsonData['data']['data']['queue']['queue_no']}";
@@ -317,22 +311,18 @@ class ClassCQueue {
         // }
         // });
       } else if (response.statusCode == 422) {
-        ToMsg =
-            "มีคิวกำลังเรียกอยู่ ปัจจุบัน\nThere is currently a queue calling.";
-        String queueNumber =
-            "กรุณาโปรดเคลียคิวก่อน\nPlease clear the queue first.";
+        ToMsg = "มีคิวกำลังเรียกอยู่ ปัจจุบัน";
+        String queueNumber = "กรุณาโปรดเคลียคิวก่อน";
         SnackBarHelper.showErrorDialog(context, ToMsg, queueNumber);
       } else {
-        ToMsg = "เกิดปัญหาทางเทคนิค\nA technical problem occurred.";
-        String queueNumber =
-            "กรุณาโปรดแจ้งพนักงาน\nPlease please inform the staff.";
+        ToMsg = "เกิดปัญหาทางเทคนิค";
+        String queueNumber = "กรุณาโปรดแจ้งพนักงาน";
         SnackBarHelper.showErrorDialog(context, ToMsg, queueNumber);
       }
     } catch (e) {
       String ToMsg = "";
       // String queueNumber = '$e';
-      String queueNumber =
-          "คิวนี้เปลี่ยนสถานะไปแล้ว\nThis queue's status has changed.";
+      String queueNumber = 'คิวนี้เปลี่ยนสถานะไปแล้ว';
       SnackBarHelper.showErrorDialog(context, ToMsg, queueNumber);
     }
   }
@@ -372,7 +362,7 @@ class ClassCQueue {
         String queueNo = queueData['queue_no'].toString();
         String callerid = callerData['caller_id'].toString();
 
-        String ToMsg = "กำลังเรียกคิว\nCalling in queue";
+        String ToMsg = "กำลังเรียกคิว";
         String queueNumber = queueNo;
         SnackBarHelper.showErrorDialog(context, ToMsg, queueNumber);
 
@@ -416,13 +406,12 @@ class ClassCQueue {
           onCallerLoaded([]);
         }
       } else if (response.statusCode == 422) {
-        String ToMsg = "มีคิวกำลังใช้งานอยู่\nThere is an active queue.";
-        String queueNumber = "กรุณาเคลียคิว\nPlease clear the queue.";
+        String ToMsg = "มีคิวกำลังใช้งานอยู่";
+        String queueNumber = "กรุณาเคลียคิว";
         SnackBarHelper.showErrorDialog(context, ToMsg, queueNumber);
       } else if (response.statusCode == 421) {
-        String ToMsg = "ไม่มีรายการคิว\nThere are no queue items.";
-        String queueNumber =
-            "กรุณาโปรดเตรียมคิวใหม่\nPlease prepare a new queue.";
+        String ToMsg = "ไม่มีรายการคิว";
+        String queueNumber = "กรุณาโปรดเตรียมคิวใหม่";
         SnackBarHelper.showErrorDialog(context, ToMsg, queueNumber);
       } else {}
     } catch (e) {
@@ -463,7 +452,7 @@ class ClassCQueue {
         String queueNo = queueData['queue_no'].toString();
         String callerid = callerData['caller_id'].toString();
 
-        String ToMsg = "กำลังเรียกคิว\Calling in queue";
+        String ToMsg = "กำลังเรียกคิว";
         String queueNumber = queueNo;
         SnackBarHelper.showErrorDialog(context, ToMsg, queueNumber);
 
@@ -482,9 +471,8 @@ class ClassCQueue {
         // }
         // });
       } else if (response.statusCode == 422) {
-        String ToMsg = "มีคิวกำลังใช้งานอยู่\nThere is an active queue.";
-        String queueNumber =
-            "กรุณาเคลียคิวให้เสร็จสิ้น\nPlease complete the queue.";
+        String ToMsg = "มีคิวกำลังใช้งานอยู่";
+        String queueNumber = "กรุณาเคลียคิวให้เสร็จสิ้น";
         SnackBarHelper.showErrorDialog(context, ToMsg, queueNumber);
         // Future.delayed(const Duration(seconds: 1), () {
         //   if (Navigator.canPop(context)) {

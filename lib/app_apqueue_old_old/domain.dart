@@ -1,21 +1,31 @@
 import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
-import 'package:http/http.dart' as http;
-
 import 'api/url.dart';
 import 'brachlist.dart';
 import 'setting/setting.dart';
+import 'package:http/http.dart' as http;
+// import 'package:somboon_v2/setting/setthing.dart';
 
-class DomainScreen extends StatefulWidget {
-  const DomainScreen({super.key});
-
+// ignore: use_key_in_widget_constructors
+class MyApp extends StatelessWidget {
   @override
-  State<DomainScreen> createState() => _DomainScreenState();
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      home: MyHomePage(),
+    );
+  }
 }
 
-class _DomainScreenState extends State<DomainScreen> {
+// ignore: library_private_types_in_public_api, use_key_in_widget_constructors
+class MyHomePage extends StatefulWidget {
+  @override
+  // ignore: library_private_types_in_public_api
+  _MyHomePageState createState() => _MyHomePageState();
+}
+
+class _MyHomePageState extends State<MyHomePage> {
   final TextEditingController _controller = TextEditingController();
-  late Box domainBox;
+  late Box _domainBox;
 
   @override
   void initState() {
@@ -24,32 +34,27 @@ class _DomainScreenState extends State<DomainScreen> {
   }
 
   void _initDomainFromHive() async {
-    domainBox = Hive.box('DomainUrl');
-    _controller.text = domainBox.get('Domain') ?? '';
+    _domainBox = Hive.box('DomainUrl');
+    _controller.text = _domainBox.get('Domain') ?? '';
     apiBaseURL = _controller.text;
     setState(() {});
   }
 
-  Future<void> _addToHive(String domain) async {
-    if (domainBox.containsKey('Domain')) {
-      await domainBox.delete('Domain');
-    }
-    await domainBox.put('Domain', domain);
-    setState(() {});
-  }
-
-  void clearInput() {
+  void _clearInput() {
     _controller.clear();
   }
 
-  void nextAction() async {
+  void _nextAction() async {
     final domainName = _controller.text.trim();
+
     if (domainName.isEmpty) {
       String ToMsg = "WARNING";
       String queueNumber = "กรุณาป้อนโดเมน";
       SnackBarHelper.showErrorSnackBar(context, ToMsg, queueNumber);
       return;
     }
+
+    // Ensure domainName starts with a valid protocol
     final correctedDomainName =
         domainName.startsWith('http://') || domainName.startsWith('https://')
             ? domainName
@@ -57,10 +62,12 @@ class _DomainScreenState extends State<DomainScreen> {
 
     await _addToHive(correctedDomainName);
 
+    // Build the URL
     final url =
         Uri.parse('$correctedDomainName/api/v1/queue-mobile/branch-list');
 
     try {
+      // Check the URL status
       final response = await http.get(url);
 
       if (response.statusCode == 404) {
@@ -86,6 +93,14 @@ class _DomainScreenState extends State<DomainScreen> {
     }
   }
 
+  Future<void> _addToHive(String domain) async {
+    if (_domainBox.containsKey('Domain')) {
+      await _domainBox.delete('Domain');
+    }
+    await _domainBox.put('Domain', domain);
+    setState(() {});
+  }
+
   @override
   Widget build(BuildContext context) {
     final Size screenSize = MediaQuery.of(context).size;
@@ -101,27 +116,20 @@ class _DomainScreenState extends State<DomainScreen> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Image.asset(
-                'assets/logo/apqueue_logo2.png',
-                width: screenWidth * 1.0,
+                'assets/logo/GetImage-removebg-preview.png',
+                width: screenWidth * 1.4,
                 height: screenHeight * 0.4,
                 fit: BoxFit.contain,
               ),
-              SizedBox(height: screenSize.height * 0.05),
+              SizedBox(height: screenSize.height * 0.01),
               // เพิ่ม TextField ที่นี่
               TextField(
                 controller: _controller,
-                style: const TextStyle(color: Colors.white),
                 decoration: const InputDecoration(
-                  hintText: 'Domain',
-                  hintStyle: TextStyle(color: Colors.white),
+                  hintText: 'Enter Domain',
                   filled: true,
-                  fillColor: Color.fromARGB(255, 0, 67, 122),
-                  enabledBorder: OutlineInputBorder(
-                    borderSide: BorderSide(color: Colors.white),
-                  ),
-                  focusedBorder: OutlineInputBorder(
-                    borderSide: BorderSide(color: Colors.white),
-                  ),
+                  fillColor: Colors.white,
+                  border: OutlineInputBorder(),
                 ),
               ),
               SizedBox(height: screenSize.height * 0.03),
@@ -129,33 +137,33 @@ class _DomainScreenState extends State<DomainScreen> {
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
                   ElevatedButton(
-                    onPressed: clearInput,
+                    onPressed: _clearInput,
                     style: ElevatedButton.styleFrom(
-                      foregroundColor: Colors.white,
-                      backgroundColor: Colors.red,
-                      side: const BorderSide(color: Colors.white, width: 2),
                       minimumSize: Size(screenWidth * 0.4, screenHeight * 0.08),
+                      foregroundColor: Colors.white,
+                      backgroundColor: const Color.fromARGB(255, 255, 0, 0),
                     ),
-                    child: const Text('เคลีย | Clear'),
+                    child: const Text('CLEAR'),
                   ),
                   ElevatedButton(
-                    onPressed: nextAction,
+                    onPressed: _nextAction,
                     style: ElevatedButton.styleFrom(
-                      foregroundColor: Colors.white,
-                      backgroundColor: const Color.fromARGB(255, 0, 67, 122),
-                      side: const BorderSide(color: Colors.white, width: 2),
                       minimumSize: Size(screenWidth * 0.4, screenHeight * 0.08),
+                      foregroundColor: Colors.white,
+                      backgroundColor: const Color.fromARGB(255, 83, 181, 214),
                     ),
-                    child: const Text('ต่อไป | Next'),
+                    child: const Text('NEXT'),
                   ),
                 ],
               ),
               Align(
-                alignment: Alignment.bottomRight,
+                alignment: Alignment.bottomRight, // Align to bottom right
                 child: Padding(
-                  padding: const EdgeInsets.all(8.0),
+                  padding: const EdgeInsets.all(
+                      8.0), // เพิ่ม padding รอบๆ ให้พอเหมาะ
                   child: Row(
-                    mainAxisAlignment: MainAxisAlignment.end,
+                    mainAxisAlignment:
+                        MainAxisAlignment.end, // จัดตำแหน่งให้ไปทางขวา
                     children: [
                       IconButton(
                         icon: const Icon(Icons.settings, color: Colors.white),
@@ -163,17 +171,19 @@ class _DomainScreenState extends State<DomainScreen> {
                           Navigator.push(
                             context,
                             MaterialPageRoute(
-                              builder: (context) => const SettingScreen(),
+                              builder: (context) => SettingScreen(),
                             ),
                           );
                         },
                       ),
-                      const SizedBox(width: 8.0),
+                      const SizedBox(
+                          width:
+                              8.0), // เพิ่มระยะห่างเล็กน้อยระหว่างไอคอนกับข้อความ
                       const Text(
-                        'V1.00',
+                        'V1.02',
                         style: TextStyle(
                           color: Colors.white,
-                          fontSize: 12.0,
+                          fontSize: 12.0, // Set font size for the version
                         ),
                       ),
                     ],

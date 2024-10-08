@@ -33,16 +33,17 @@ class _CounterListSState extends State<CounterListS> {
 
   @override
   Widget build(BuildContext context) {
+    // ใช้ MediaQuery เพื่อคำนวณขนาดตามหน้าจอ
     final size = MediaQuery.of(context).size;
-    final buttonHeight = size.height * 0.06;
-    final iconSize = size.height * 0.05;
-    final fontSize = size.height * 0.02;
+    final buttonHeight = size.height * 0.06; // ปรับขนาดปุ่มตามความสูงของหน้าจอ
+    final iconSize = size.height * 0.05; // ปรับขนาดไอคอนตามความสูงของหน้าจอ
+    final fontSize = size.height * 0.03; // ปรับขนาดฟอนต์ตามความสูงของหน้าจอ
 
     return Scaffold(
       backgroundColor: const Color.fromARGB(255, 0, 67, 122),
       appBar: AppBar(
         title: Text(
-          'เลือกเค้าเตอร์ | Select Counter',
+          'Select Counter',
           style: TextStyle(
             fontSize: fontSize,
             color: Colors.white,
@@ -57,10 +58,8 @@ class _CounterListSState extends State<CounterListS> {
         padding: const EdgeInsets.all(16.0),
         child: LayoutBuilder(
           builder: (context, constraints) {
-            final double buttonWidth = constraints.maxWidth;
-            final double buttonHeight = size.height * 0.08;
-            final double iconSize = size.height * 0.03;
-            final double fontSize = size.height * 0.02;
+            final double buttonWidth =
+                constraints.maxWidth; // ใช้ความกว้างหน้าจอ
 
             return ListView.builder(
               itemCount: _counters.length,
@@ -83,13 +82,14 @@ class _CounterListSState extends State<CounterListS> {
                         );
                       },
                       style: ElevatedButton.styleFrom(
-                        foregroundColor: const Color.fromARGB(255, 0, 67, 122),
+                        foregroundColor: const Color.fromRGBO(9, 159, 175, 1.0),
                         backgroundColor:
                             const Color.fromARGB(255, 255, 255, 255),
-                        padding: const EdgeInsets.symmetric(
-                          vertical: 12.0,
-                        ),
-                        minimumSize: Size(buttonWidth, buttonHeight),
+                        padding: EdgeInsets.symmetric(
+                          vertical: buttonHeight / 2,
+                        ), // ปรับ padding ตามขนาดหน้าจอ
+                        minimumSize: Size(
+                            buttonWidth, buttonHeight), // ขนาดปุ่มตามหน้าจอ
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(50),
                         ),
@@ -98,20 +98,20 @@ class _CounterListSState extends State<CounterListS> {
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           const SizedBox(
-                            width: 10,
+                            width: 40, // เพิ่มช่องว่างทางซ้าย
                           ),
                           Expanded(
                             child: Text(
                               branchName,
                               style: TextStyle(
-                                fontSize: fontSize,
+                                fontSize: fontSize, // ปรับขนาดฟอนต์ตามหน้าจอ
                               ),
                             ),
                           ),
                           Icon(
                             Icons.arrow_forward,
-                            size: iconSize,
-                            color: const Color.fromARGB(255, 0, 67, 122),
+                            size: iconSize, // ปรับขนาดไอคอนตามหน้าจอ
+                            color: const Color.fromRGBO(9, 159, 175, 1.0),
                           ),
                         ],
                       ),

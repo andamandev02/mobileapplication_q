@@ -47,57 +47,25 @@ class _Tab4State extends State<Tab4> {
   final _queuesStreamController =
       StreamController<List<Map<String, dynamic>>>();
 
-  final ScrollController _scrollController = ScrollController();
-  int currentPage = 1; // หน้าเริ่มต้น
-  bool isLoading = false; // สถานะการโหลด
-  final int itemsPerPage = 10; // จำนวนรายการที่จะโหลดในแต่ละหน้า
-
-  void _onScroll() {
-    // ตรวจสอบการเลื่อนลง
-    if (_scrollController.position.pixels >=
-        _scrollController.position.maxScrollExtent - 200) {
-      fetchMoreQueues(); // เรียกใช้ฟังก์ชันเพื่อโหลดข้อมูลเพิ่มเติมเมื่อเลื่อนลง
-    }
-  }
-
-// ฟังก์ชันโหลดข้อมูลเพิ่มเติม
-  Future<void> fetchMoreQueues() async {
-    if (isLoading) return; // ถ้ากำลังโหลดอยู่ไม่ทำอะไร
-    setState(() {
-      isLoading = true; // ตั้งค่าสถานะการโหลด
-    });
-
-    // เพิ่มหน้าใหม่
-    currentPage++;
-
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    FocusScope.of(context).requestFocus(FocusNode());
     final tabData = TabData.of(context);
     if (tabData != null) {
-      await fetchSearchQueue(
-        tabData.branches['branch_id'].toString(),
-        queueNo,
-        selectedStatus,
-        itemsPerPage: itemsPerPage, // ส่งจำนวนรายการที่ต้องการโหลด
-      );
+      fetchSearchQueue(
+          tabData.branches['branch_id'].toString(), queueNo, selectedStatus);
     }
-
-    setState(() {
-      isLoading = false; // ตั้งค่าสถานะการโหลดเสร็จสิ้น
-    });
   }
 
   Future<void> fetchSearchQueue(
-      String branchId, String queueNo, QueueStatus status,
-      {int itemsPerPage = 10}) async {
+      String branchId, String queueNo, QueueStatus status) async {
     await ClassQueue.queuelist(
       context: context,
       branchid: branchId,
       onSearchQueueLoaded: (loadedSearchQueue) {
         if (mounted) {
           setState(() {
-            // เพิ่มโค้ดเพื่อโหลดเฉพาะรายการที่ต้องการ
-            queues.addAll(loadedSearchQueue
-                .take(itemsPerPage)
-                .toList()); // โหลดเฉพาะ 10 รายการแรก
             // เปลี่ยน queueNo เป็นตัวพิมพ์เล็ก
             final searchQueueNo = queueNo.toLowerCase();
 
@@ -135,7 +103,25 @@ class _Tab4State extends State<Tab4> {
             widget.filteredQueues3Notifier.value = filteredQueues3;
             widget.filteredQueuesANotifier.value = filteredQueuesA;
 
-            // คำนวณจำนวนรายการที่แสดง
+            // กรองตามสถานะคิว
+            // if (status == QueueStatus.waiting) {
+            //   queues = queues.where((item) {
+            //     return _getQueueStatus(item['service_status_id']) ==
+            //         QueueStatus.waiting;
+            //   }).toList();
+            // } else if (status == QueueStatus.ended) {
+            //   queues = queues.where((item) {
+            //     return _getQueueStatus(item['service_status_id']) ==
+            //         QueueStatus.ended;
+            //   }).toList();
+            // } else if (status == QueueStatus.clear) {
+            //   queues = queues.toList();
+            // } else {
+            //   queues = queues.where((item) {
+            //     return _getQueueStatus(item['service_status_id']) == status;
+            //   }).toList();
+            // }
+
             _queuesStreamController.add(queues);
           });
         }
@@ -144,20 +130,7 @@ class _Tab4State extends State<Tab4> {
   }
 
   @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-    FocusScope.of(context).requestFocus(FocusNode());
-    _scrollController.addListener(_onScroll);
-    final tabData = TabData.of(context);
-    if (tabData != null) {
-      fetchSearchQueue(
-          tabData.branches['branch_id'].toString(), queueNo, selectedStatus);
-    }
-  }
-
-  @override
   void dispose() {
-    _scrollController.dispose();
     _queuesStreamController.close();
     super.dispose();
   }
@@ -181,10 +154,6 @@ class _Tab4State extends State<Tab4> {
 
   @override
   Widget build(BuildContext context) {
-    final size = MediaQuery.of(context).size;
-    final buttonHeight = size.height * 0.06;
-    final iconSize = size.height * 0.05;
-    final fontSize = size.height * 0.02;
     return Column(
       children: [
         Padding(
@@ -195,14 +164,14 @@ class _Tab4State extends State<Tab4> {
                 child: TextField(
                   controller: _controller,
                   decoration: InputDecoration(
-                    labelText: 'พิมพ์เพื่อค้นหา Q NO | Search Q No',
-                    labelStyle: TextStyle(
-                      color: const Color.fromARGB(255, 0, 67, 122),
-                      fontSize: fontSize,
+                    labelText: 'พิมพ์เพื่อค้นหา QUEUE NO',
+                    labelStyle: const TextStyle(
+                      fontSize: 25,
+                      color: Color.fromRGBO(9, 159, 175, 1.0),
                     ),
                     border: OutlineInputBorder(
                       borderRadius:
-                          BorderRadius.circular(50.0), // กำหนดรัศมีของขอบมน
+                          BorderRadius.circular(12.0), // กำหนดรัศมีของขอบมน
                       borderSide: const BorderSide(
                         color: Color.fromRGBO(9, 159, 175, 1.0), // สีของเส้นขอบ
                         width: 2.0, // ความหนาของเส้นขอบ
@@ -210,17 +179,19 @@ class _Tab4State extends State<Tab4> {
                     ),
                     focusedBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(
-                          50.0), // กำหนดรัศมีของขอบมนเมื่อโฟกัส
+                          12.0), // กำหนดรัศมีของขอบมนเมื่อโฟกัส
                       borderSide: const BorderSide(
-                        color: const Color.fromARGB(255, 0, 67, 122),
+                        color: Color.fromRGBO(
+                            9, 159, 175, 1.0), // สีของเส้นขอบเมื่อโฟกัส
                         width: 2.0, // ความหนาของเส้นขอบเมื่อโฟกัส
                       ),
                     ),
                     enabledBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(
-                          50.0), // กำหนดรัศมีของขอบมนเมื่อเปิดใช้งาน
+                          12.0), // กำหนดรัศมีของขอบมนเมื่อเปิดใช้งาน
                       borderSide: const BorderSide(
-                        color: const Color.fromARGB(255, 0, 67, 122),
+                        color: Color.fromRGBO(
+                            9, 159, 175, 1.0), // สีของเส้นขอบเมื่อเปิดใช้งาน
                         width: 2.0, // ความหนาของเส้นขอบเมื่อเปิดใช้งาน
                       ),
                     ),
@@ -231,7 +202,7 @@ class _Tab4State extends State<Tab4> {
                             : Icons.search, // เปลี่ยนไอคอนตามค่าของ TextField
                         color: _controller.text.isNotEmpty
                             ? const Color.fromRGBO(255, 0, 0, 1)
-                            : const Color.fromARGB(255, 0, 67, 122),
+                            : const Color.fromRGBO(9, 159, 175, 1.0),
                       ),
                       onPressed: () {
                         if (_controller.text.isNotEmpty) {
@@ -263,9 +234,7 @@ class _Tab4State extends State<Tab4> {
                     filled: true, // ให้มีสีพื้นหลัง
                   ),
                   style: const TextStyle(
-                    fontSize: 25,
-                    color: const Color.fromARGB(255, 0, 67, 122),
-                  ),
+                      fontSize: 25, color: Color.fromRGBO(9, 159, 175, 1.0)),
                   onChanged: (value) {
                     setState(() {
                       queueNo = value;
@@ -281,7 +250,7 @@ class _Tab4State extends State<Tab4> {
                   },
                 ),
               ),
-              // const SizedBox(width: 5),
+              const SizedBox(width: 8),
               // PopupMenuButton<QueueStatus>(
               //   icon: const Icon(
               //     Icons.filter_list,
@@ -318,7 +287,7 @@ class _Tab4State extends State<Tab4> {
               //   }).toList(),
               // ),
               Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 12.0),
+                padding: const EdgeInsets.symmetric(horizontal: 40.0),
                 child: PopupMenuButton<String>(
                   onSelected: (String value) {
                     setState(() {
@@ -335,56 +304,56 @@ class _Tab4State extends State<Tab4> {
                   },
                   itemBuilder: (BuildContext context) {
                     return [
-                      PopupMenuItem<String>(
+                      const PopupMenuItem<String>(
                         value: 'a',
                         child: Text(
                           '     A',
                           style: TextStyle(
-                            fontSize: fontSize,
+                            fontSize: 30.0,
                             color: Colors.white,
                           ),
                           textAlign: TextAlign.center,
                         ),
                       ),
-                      PopupMenuItem<String>(
+                      const PopupMenuItem<String>(
                         value: 'b',
                         child: Text(
                           '     B',
                           style: TextStyle(
-                            fontSize: fontSize,
+                            fontSize: 30.0,
                             color: Colors.white,
                           ),
                           textAlign: TextAlign.center,
                         ),
                       ),
-                      PopupMenuItem<String>(
+                      const PopupMenuItem<String>(
                         value: 'c',
                         child: Text(
                           '     C',
                           style: TextStyle(
-                            fontSize: fontSize,
+                            fontSize: 30.0,
                             color: Colors.white,
                           ),
                           textAlign: TextAlign.center,
                         ),
                       ),
-                      PopupMenuItem<String>(
+                      const PopupMenuItem<String>(
                         value: 'd',
                         child: Text(
                           '     D',
                           style: TextStyle(
-                            fontSize: fontSize,
+                            fontSize: 30.0,
                             color: Colors.white,
                           ),
                           textAlign: TextAlign.center,
                         ),
                       ),
-                      PopupMenuItem<String>(
+                      const PopupMenuItem<String>(
                         value: 'clear',
                         child: Text(
-                          ' clear',
+                          ' เคลีย',
                           style: TextStyle(
-                            fontSize: fontSize,
+                            fontSize: 30.0,
                             color: Colors.white,
                           ),
                           textAlign: TextAlign.center,
@@ -396,57 +365,12 @@ class _Tab4State extends State<Tab4> {
                     Icons.filter_list,
                     color: Color.fromARGB(255, 255, 255, 255),
                   ),
-                  color: const Color.fromARGB(255, 0, 67, 122),
+                  color: const Color.fromRGBO(9, 159, 175, 1.0),
                 ),
               )
             ],
           ),
         ),
-        // Expanded(
-        //   child: StreamBuilder<List<Map<String, dynamic>>>(
-        //     stream: _queuesStreamController.stream,
-        //     builder: (context, snapshot) {
-        //       if (snapshot.connectionState == ConnectionState.waiting) {
-        //         return const Center(child: CircularProgressIndicator());
-        //       } else if (snapshot.hasError) {
-        //         return Center(child: Text('Error: ${snapshot.error}'));
-        //       } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-        //         return Center(
-        //             child: Text('ไม่มีรายการ',
-        //                 style: TextStyle(
-        //                   fontSize: fontSize,
-        //                   // fontWeight: FontWeight.bold,
-        //                   color: Colors.white,
-        //                 )));
-        //       }
-
-        //       final queues = snapshot.data!;
-        //       final size = MediaQuery.of(context).size;
-        //       final buttonHeight = size.height * 0.06;
-
-        //       return ListView.builder(
-        //         itemCount: queues.length,
-        //         itemBuilder: (context, index) {
-        //           final item = queues[index];
-        //           final status = _getQueueStatus(item['service_status_id']);
-        //           final tabData = TabData.of(context);
-        //           final branchId =
-        //               tabData?.branches['branch_id'].toString() ?? '0';
-
-        //           return QueueItemWidget(
-        //             item: item,
-        //             buttonHeight: buttonHeight,
-        //             size: size,
-        //             branchId: branchId,
-        //             tabController: widget.tabController,
-        //             status: status,
-        //             onQueueUpdated: fetchSearchQueue,
-        //           );
-        //         },
-        //       );
-        //     },
-        //   ),
-        // ),
         Expanded(
           child: StreamBuilder<List<Map<String, dynamic>>>(
             stream: _queuesStreamController.stream,
@@ -456,11 +380,13 @@ class _Tab4State extends State<Tab4> {
               } else if (snapshot.hasError) {
                 return Center(child: Text('Error: ${snapshot.error}'));
               } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                return Center(
-                  child: Text('ไม่มีรายการ',
-                      style:
-                          TextStyle(fontSize: fontSize, color: Colors.white)),
-                );
+                return const Center(
+                    child: Text('ไม่มีรายการ',
+                        style: TextStyle(
+                          fontSize: 20,
+                          // fontWeight: FontWeight.bold,
+                          color: Colors.white,
+                        )));
               }
 
               final queues = snapshot.data!;
@@ -468,16 +394,8 @@ class _Tab4State extends State<Tab4> {
               final buttonHeight = size.height * 0.06;
 
               return ListView.builder(
-                controller: _scrollController,
-                itemCount: queues.length +
-                    (isLoading ? 1 : 0), // Add one for the loading indicator
+                itemCount: queues.length,
                 itemBuilder: (context, index) {
-                  if (index == queues.length) {
-                    return Center(
-                        child:
-                            CircularProgressIndicator()); // Loading indicator
-                  }
-
                   final item = queues[index];
                   final status = _getQueueStatus(item['service_status_id']);
                   final tabData = TabData.of(context);
@@ -552,15 +470,10 @@ class _QueueItemWidgetState extends State<QueueItemWidget> {
 
   @override
   Widget build(BuildContext context) {
-    final size = MediaQuery.of(context).size;
-    final buttonHeight = size.height * 0.06;
-    final buttonWidth = size.width * 0.2;
-    final fontSize = size.height * 0.02;
-
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 5.0, horizontal: 8.0),
+      padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 8.0),
       child: Container(
-        padding: const EdgeInsets.all(3.0),
+        padding: const EdgeInsets.all(12.0),
         decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.circular(10.0),
@@ -572,284 +485,166 @@ class _QueueItemWidgetState extends State<QueueItemWidget> {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Expanded(
-                  flex: 1,
-                  child: _buildText(
-                    "${widget.item['queue_no']}",
-                    fontSize * 1.5,
-                    const Color.fromARGB(255, 0, 67, 122),
-                  ),
-                ),
-                Expanded(
-                  flex: 2,
-                  child: _buildText(
-                    _formatName(
-                      "N:${widget.item['customer_name'] ?? 'NoName'}",
-                    ),
-                    fontSize,
-                    const Color.fromARGB(255, 0, 67, 122),
-                  ),
-                ),
-                Expanded(
-                  flex: 2,
-                  child: _buildText(
-                    "T:${widget.item['phone_number'] ?? 'NoPhone'}",
-                    fontSize,
-                    const Color.fromARGB(255, 0, 67, 122),
-                  ),
-                ),
-              ],
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
                 if (widget.status == QueueStatus.waiting) ...[
-                  // Expanded(
-                  //   flex: 1,
-                  //   child: _buildText(
-                  //     widget.item['queue_no'],
-                  //     fontSize,
-                  //     const Color.fromARGB(255, 0, 67, 122),
-                  //   ),
-                  // ),
-                  Expanded(
-                    flex: 1,
-                    child: _buildText(
-                      "Number\n${widget.item['number_pax']} PAX",
-                      fontSize,
-                      const Color.fromARGB(255, 144, 148, 148),
-                    ),
+                  _buildText(
+                    _getStatusText(widget.status),
+                    20.0,
+                    const Color.fromRGBO(9, 159, 175, 1.0),
                   ),
-                  Expanded(
-                    flex: 1,
-                    child: _buildText(
-                      "Queue\n${formatQueueTime(widget.item['queue_time'])}",
-                      fontSize,
-                      const Color.fromARGB(255, 144, 148, 148),
-                    ),
+                  _buildText(
+                    widget.item['queue_no'],
+                    25.0,
+                    const Color.fromRGBO(9, 159, 175, 1.0),
                   ),
-                  Expanded(
-                    flex: 1,
-                    child: _buildText(
-                      _getStatusText(widget.status),
-                      fontSize,
-                      const Color.fromARGB(255, 0, 67, 122),
-                    ),
+                  _buildText(
+                    "จำนวน\n${widget.item['number_pax']} PAX",
+                    20.0,
+                    const Color.fromARGB(255, 144, 148, 148),
                   ),
-                  Expanded(
-                    flex: 1,
-                    child: _buildElevatedButton(
-                        'Call',
-                        const Color.fromARGB(255, 0, 67, 122),
-                        widget.buttonHeight,
-                        _callQueue),
+                  _buildText(
+                    "ออกคิว\n${formatQueueTime(widget.item['queue_time'])}",
+                    20.0,
+                    const Color.fromARGB(255, 144, 148, 148),
                   ),
-                  const SizedBox(width: 5),
-                  Expanded(
-                    flex: 1,
-                    child: _buildElevatedButton(
-                        'Reprint',
-                        const Color.fromARGB(255, 38, 152, 13),
-                        widget.buttonHeight,
-                        _reprintQueue),
-                  ),
+                  // _buildText(
+                  //     "เวลารอ\n${calculateTimeDifference(widget.item['queue_time'])}",
+                  //     20.0),
+                  _buildElevatedButton(
+                      'เรียกคิว',
+                      const Color.fromRGBO(9, 159, 175, 1.0),
+                      widget.buttonHeight,
+                      _callQueue),
+                  const SizedBox(width: 8),
+                  _buildElevatedButton(
+                      'รีบัตรคิว',
+                      const Color.fromARGB(255, 38, 152, 13),
+                      widget.buttonHeight,
+                      _reprintQueue),
                 ] else if (widget.status == QueueStatus.called) ...[
-                  // Expanded(
-                  //   flex: 1,
-                  //   child: _buildText(
-                  //     widget.item['queue_no'],
-                  //     fontSize,
-                  //     const Color.fromARGB(255, 0, 67, 122),
-                  //   ),
-                  // ),
-                  Expanded(
-                    flex: 1,
-                    child: _buildText(
-                      "Number\n${widget.item['number_pax']} PAX",
-                      fontSize,
-                      const Color.fromARGB(255, 144, 148, 148),
-                    ),
+                  _buildText(
+                    _getStatusText(widget.status),
+                    20.0,
+                    const Color.fromRGBO(9, 159, 175, 1.0),
                   ),
-                  Expanded(
-                    flex: 1,
-                    child: _buildText(
-                      "Queue\n${formatQueueTime(widget.item['queue_time'])}",
-                      fontSize,
-                      const Color.fromARGB(255, 144, 148, 148),
-                    ),
+                  _buildText(
+                    widget.item['queue_no'],
+                    25.0,
+                    const Color.fromRGBO(9, 159, 175, 1.0),
                   ),
-                  Expanded(
-                    flex: 1,
-                    child: _buildText(
-                      _getStatusText(widget.status),
-                      fontSize,
-                      const Color.fromARGB(255, 0, 67, 122),
-                    ),
+                  _buildText(
+                    "จำนวน\n${widget.item['number_pax']} PAX",
+                    20.0,
+                    const Color.fromARGB(255, 144, 148, 148),
                   ),
-                  Expanded(
-                    flex: 1,
-                    child: _buildElevatedButton(
-                        'Hold',
-                        const Color.fromRGBO(249, 162, 31, 1),
-                        widget.buttonHeight,
-                        _holdQueue),
+                  _buildText(
+                    "ออกคิว\n${formatQueueTime(widget.item['queue_time'])}",
+                    20.0,
+                    const Color.fromARGB(255, 144, 148, 148),
                   ),
-                  // const SizedBox(width: 8),
-                  // Expanded(
-                  //   flex: 1,
-                  //   child: _buildElevatedButton(
-                  //       'เรียกซ้ำ',
-                  //       const Color.fromRGBO(9, 159, 175, 1.0),
-                  //       widget.buttonHeight,
-                  //       _recallQueue),
-                  // ),
-                  const SizedBox(width: 5),
-                  Expanded(
-                    flex: 1,
-                    child: _buildElevatedButton(
-                        'Reprint',
-                        const Color.fromARGB(255, 38, 152, 13),
-                        widget.buttonHeight,
-                        _reprintQueue),
-                  ),
+                  _buildElevatedButton(
+                      'พักคิว',
+                      const Color.fromRGBO(249, 162, 31, 1),
+                      widget.buttonHeight,
+                      _holdQueue),
+                  const SizedBox(width: 8),
+                  _buildElevatedButton(
+                      'เรียกซ้ำ',
+                      const Color.fromRGBO(9, 159, 175, 1.0),
+                      widget.buttonHeight,
+                      _recallQueue),
+                  const SizedBox(width: 8),
+                  _buildElevatedButton(
+                      'รีบัตรคิว',
+                      const Color.fromARGB(255, 38, 152, 13),
+                      widget.buttonHeight,
+                      _reprintQueue),
                 ] else if (widget.status == QueueStatus.paused) ...[
-                  // Expanded(
-                  //   flex: 1,
-                  //   child: _buildText(
-                  //     widget.item['queue_no'],
-                  //     fontSize,
-                  //     const Color.fromARGB(255, 0, 67, 122),
-                  //   ),
-                  // ),
-                  Expanded(
-                    flex: 1,
-                    child: _buildText(
-                      "Number\n${widget.item['number_pax']} PAX",
-                      fontSize,
-                      const Color.fromARGB(255, 144, 148, 148),
-                    ),
+                  _buildText(
+                    _getStatusText(widget.status),
+                    20.0,
+                    const Color.fromRGBO(9, 159, 175, 1.0),
                   ),
-                  Expanded(
-                    flex: 1,
-                    child: _buildText(
-                      "Queue\n${formatQueueTime(widget.item['queue_time'])}",
-                      fontSize,
-                      const Color.fromARGB(255, 144, 148, 148),
-                    ),
+                  _buildText(
+                    widget.item['queue_no'],
+                    25.0,
+                    const Color.fromRGBO(9, 159, 175, 1.0),
                   ),
-                  Expanded(
-                    flex: 1,
-                    child: _buildText(
-                      "Hold\n${formatQueueTime(widget.item['hold_time']!)}",
-                      fontSize,
-                      const Color.fromARGB(255, 255, 0, 0),
-                    ),
+                  _buildText(
+                    "จำนวน\n${widget.item['number_pax']} PAX",
+                    20.0,
+                    const Color.fromARGB(255, 144, 148, 148),
                   ),
-                  Expanded(
-                    flex: 1,
-                    child: _buildText(
-                      _getStatusText(widget.status),
-                      fontSize,
-                      const Color.fromARGB(255, 0, 67, 122),
-                    ),
+                  _buildText(
+                    "ออกคิว\n${formatQueueTime(widget.item['queue_time'])}",
+                    20.0,
+                    const Color.fromARGB(255, 144, 148, 148),
+                  ),
+                  _buildText(
+                    "พักคิว\n${formatQueueTime(widget.item['hold_time']!)}",
+                    20.0,
+                    const Color.fromARGB(255, 255, 0, 0),
                   ),
                 ] else if (widget.status == QueueStatus.ended) ...[
-                  // Expanded(
-                  //   flex: 1,
-                  //   child: _buildText(
-                  //     widget.item['queue_no'],
-                  //     fontSize,
-                  //     const Color.fromARGB(255, 0, 67, 122),
-                  //   ),
-                  // ),
-                  Expanded(
-                    flex: 1,
-                    child: _buildText(
-                      "Number\n${widget.item['number_pax']} PAX",
-                      fontSize,
-                      const Color.fromARGB(255, 144, 148, 148),
-                    ),
+                  _buildText(
+                    _getStatusText(widget.status),
+                    20.0,
+                    const Color.fromRGBO(9, 159, 175, 1.0),
                   ),
-                  Expanded(
-                    flex: 1,
-                    child: _buildText(
-                      "Queue\n${formatQueueTime(widget.item['queue_time'])}",
-                      fontSize,
-                      const Color.fromARGB(255, 144, 148, 148),
-                    ),
+                  _buildText(
+                    widget.item['queue_no'],
+                    25.0,
+                    const Color.fromRGBO(9, 159, 175, 1.0),
                   ),
-                  Expanded(
-                    flex: 1,
-                    child: _buildText(
-                      "Hold\n${widget.item['hold_time'] != null ? formatQueueTime(widget.item['hold_time']) : '-'}",
-                      fontSize,
-                      const Color.fromARGB(255, 144, 148, 148),
-                    ),
+                  _buildText(
+                    "จำนวน\n${widget.item['number_pax']} PAX",
+                    20.0,
+                    const Color.fromARGB(255, 144, 148, 148),
                   ),
-                  Expanded(
-                    flex: 1,
-                    child: _buildText(
-                      "End\n${widget.item['end_time'] != null ? formatQueueTime(widget.item['end_time']) : '-'}",
-                      fontSize,
-                      const Color.fromARGB(255, 255, 0, 0),
-                    ),
+                  _buildText(
+                    "ออกคิว\n${formatQueueTime(widget.item['queue_time'])}",
+                    20.0,
+                    const Color.fromARGB(255, 144, 148, 148),
                   ),
-                  Expanded(
-                    flex: 1,
-                    child: _buildText(
-                      _getStatusText(widget.status),
-                      fontSize,
-                      const Color.fromARGB(255, 0, 67, 122),
-                    ),
+                  _buildText(
+                    "พักคิว\n${widget.item['hold_time'] != null ? formatQueueTime(widget.item['hold_time']) : '-'}",
+                    20.0,
+                    const Color.fromARGB(255, 144, 148, 148),
+                  ),
+                  _buildText(
+                    "จบคิว\n${widget.item['end_time'] != null ? formatQueueTime(widget.item['end_time']) : '-'}",
+                    20.0,
+                    const Color.fromARGB(255, 255, 0, 0),
                   ),
                 ] else if (widget.status == QueueStatus.finished) ...[
-                  // Expanded(
-                  //   flex: 1,
-                  //   child: _buildText(
-                  //     widget.item['queue_no'],
-                  //     fontSize,
-                  //     const Color.fromARGB(255, 0, 67, 122),
-                  //   ),
-                  // ),
-                  Expanded(
-                    flex: 1,
-                    child: _buildText(
-                      "Number\n${widget.item['number_pax']} PAX",
-                      fontSize,
-                      const Color.fromARGB(255, 144, 148, 148),
-                    ),
+                  _buildText(
+                    _getStatusText(widget.status),
+                    20.0,
+                    const Color.fromRGBO(9, 159, 175, 1.0),
                   ),
-                  Expanded(
-                    flex: 1,
-                    child: _buildText(
-                      "Queue\n${formatQueueTime(widget.item['queue_time'])}",
-                      fontSize,
-                      const Color.fromARGB(255, 144, 148, 148),
-                    ),
+                  _buildText(
+                    widget.item['queue_no'],
+                    25.0,
+                    const Color.fromRGBO(9, 159, 175, 1.0),
                   ),
-                  Expanded(
-                    flex: 1,
-                    child: _buildText(
-                      "Hold\n${widget.item['hold_time'] != null ? formatQueueTime(widget.item['hold_time']) : '-'}",
-                      fontSize,
-                      const Color.fromARGB(255, 144, 148, 148),
-                    ),
+                  _buildText(
+                    "จำนวน\n${widget.item['number_pax']} PAX",
+                    20.0,
+                    const Color.fromARGB(255, 144, 148, 148),
                   ),
-                  Expanded(
-                    flex: 1,
-                    child: _buildText(
-                      "End\n${widget.item['end_time'] != null ? formatQueueTime(widget.item['end_time']) : '-'}",
-                      fontSize,
-                      const Color.fromARGB(255, 255, 0, 0),
-                    ),
+                  _buildText(
+                    "ออกคิว\n${formatQueueTime(widget.item['queue_time'])}",
+                    20.0,
+                    const Color.fromARGB(255, 144, 148, 148),
                   ),
-                  Expanded(
-                    flex: 1,
-                    child: _buildText(
-                      _getStatusText(widget.status),
-                      fontSize,
-                      const Color.fromARGB(255, 0, 67, 122),
-                    ),
+                  _buildText(
+                    "พักคิว\n${widget.item['hold_time'] != null ? formatQueueTime(widget.item['hold_time']) : '-'}",
+                    20.0,
+                    const Color.fromARGB(255, 144, 148, 148),
+                  ),
+                  _buildText(
+                    "จบคิว\n${widget.item['end_time'] != null ? formatQueueTime(widget.item['end_time']) : '-'}",
+                    20.0,
+                    const Color.fromARGB(255, 255, 0, 0),
                   ),
                 ],
               ],
@@ -858,21 +653,6 @@ class _QueueItemWidgetState extends State<QueueItemWidget> {
         ),
       ),
     );
-  }
-
-  String _formatName(String fullName) {
-    final nameParts = fullName.split(' '); // แยกชื่อและนามสกุล
-    if (nameParts.length < 2)
-      return fullName; // ถ้ามีแค่ชื่อเดียว ให้ส่งคืนตามปกติ
-
-    final firstName = nameParts[0]; // ชื่อ
-    final lastName = nameParts.sublist(1).join(' '); // นามสกุล
-
-    // เช็คความยาวของนามสกุล
-    if (lastName.length > 3) {
-      return '$firstName ${lastName.substring(0, 3)}...'; // ตัดและเพิ่ม ...
-    }
-    return fullName; // ส่งคืนชื่อทั้งหมดถ้านามสกุลไม่เกิน 3 ตัว
   }
 
   Widget _buildText(String text, double size, Color color) {
@@ -895,8 +675,6 @@ class _QueueItemWidgetState extends State<QueueItemWidget> {
     double height,
     Future<void> Function(BuildContext) onPressed,
   ) {
-    final size = MediaQuery.of(context).size;
-    final fontSize = size.height * 0.02;
     return Expanded(
       child: SizedBox(
         height: height,
@@ -914,8 +692,8 @@ class _QueueItemWidgetState extends State<QueueItemWidget> {
           ),
           child: Text(
             label,
-            style: TextStyle(
-              fontSize: fontSize,
+            style: const TextStyle(
+              fontSize: 20,
             ),
           ),
         ),
@@ -1034,15 +812,15 @@ class _QueueItemWidgetState extends State<QueueItemWidget> {
   String _getStatusText(QueueStatus status) {
     switch (status) {
       case QueueStatus.waiting:
-        return 'Wait';
+        return 'รอเรียก';
       case QueueStatus.called:
-        return 'Call';
+        return 'เรียกแล้ว';
       case QueueStatus.paused:
-        return 'Holding';
+        return 'พักคิว';
       case QueueStatus.finished:
-        return 'Finish';
+        return 'เสร็จสิ้น';
       case QueueStatus.ended:
-        return 'Cancel';
+        return 'ยกเลิก';
       default:
         return '';
     }

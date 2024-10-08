@@ -149,13 +149,14 @@ class _SplashScreenState extends State<SplashScreen>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color.fromRGBO(9, 159, 175, 1.0),
+      backgroundColor: const Color.fromARGB(255, 0, 67, 122),
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             // แสดงรูปภาพด้านบน
-            Image.asset('assets/logo/logo.png', width: 200, height: 200),
+            Image.asset('assets/logo/GetImage-removebg-preview.png',
+                width: 200, height: 200),
             const SizedBox(height: 20),
             // ใช้ Container เพื่อกำหนดขนาดของ LinearProgressIndicator
             Container(
