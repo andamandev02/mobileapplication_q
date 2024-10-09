@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import '../cancel_screen.dart';
 import '../loadingsreen.dart';
+import '../provider/provider.dart';
 import 'TabData.dart';
 import '../api/queue/crud.dart';
 import '../api/queue/queuelist.dart';
@@ -118,6 +120,8 @@ class _Tab3State extends State<Tab3> {
 
   @override
   Widget build(BuildContext context) {
+    final hiveData = Provider.of<DataProvider>(context);
+
     final size = MediaQuery.of(context).size;
     final buttonHeight = size.height * 0.06;
     final iconSize = size.height * 0.05;
@@ -134,7 +138,7 @@ class _Tab3State extends State<Tab3> {
                   decoration: InputDecoration(
                     labelText: 'พิมพ์เพื่อค้นหา Q NO | Search Q No',
                     labelStyle: TextStyle(
-                      color: const Color.fromARGB(255, 0, 67, 122),
+                      color: hiveData.colorValue ?? Color(0xFF099FAF),
                       fontSize: fontSize,
                     ),
                     border: OutlineInputBorder(
@@ -154,7 +158,7 @@ class _Tab3State extends State<Tab3> {
                             : Icons.search,
                         color: _searchController.text.isNotEmpty
                             ? const Color.fromRGBO(255, 0, 0, 1)
-                            : const Color.fromARGB(255, 0, 67, 122),
+                            : hiveData.colorValue ?? Color(0xFF099FAF),
                       ),
                       onPressed: () {
                         _searchController.clear();
@@ -174,7 +178,7 @@ class _Tab3State extends State<Tab3> {
                   ),
                   style: TextStyle(
                     fontSize: fontSize,
-                    color: const Color.fromARGB(255, 0, 67, 122),
+                    color: hiveData.colorValue ?? Color(0xFF099FAF),
                   ),
                   onChanged: _onSearchChanged, // เรียกใช้เมื่อพิมพ์
                 ),
@@ -251,7 +255,7 @@ class _Tab3State extends State<Tab3> {
                       Icons.filter_list,
                       color: Color.fromARGB(255, 255, 255, 255),
                     ),
-                    color: const Color.fromARGB(255, 0, 67, 122),
+                    color: hiveData.colorValue ?? Color(0xFF099FAF),
                   ),
                 ),
               )
@@ -398,6 +402,8 @@ class _QueueItemWidgetState extends State<QueueItemWidget> {
 
   @override
   Widget build(BuildContext context) {
+    final hiveData = Provider.of<DataProvider>(context);
+
     final size = MediaQuery.of(context).size;
     final buttonHeight = size.height * 0.06;
     final buttonWidth = size.width * 0.2;
@@ -422,7 +428,7 @@ class _QueueItemWidgetState extends State<QueueItemWidget> {
                   child: _buildText(
                     "${widget.item['queue_no']}",
                     fontSize * 1.5,
-                    const Color.fromARGB(255, 0, 67, 122),
+                    hiveData.colorValue ?? Color(0xFF099FAF),
                   ),
                 ),
                 Expanded(
@@ -432,7 +438,7 @@ class _QueueItemWidgetState extends State<QueueItemWidget> {
                       "N:${widget.item['customer_name'] ?? 'NoName'}",
                     ),
                     fontSize,
-                    const Color.fromARGB(255, 0, 67, 122),
+                    hiveData.colorValue ?? Color(0xFF099FAF),
                   ),
                 ),
                 Expanded(
@@ -440,7 +446,7 @@ class _QueueItemWidgetState extends State<QueueItemWidget> {
                   child: _buildText(
                     "T:${widget.item['phone_number'] ?? 'NoPhone'}",
                     fontSize,
-                    const Color.fromARGB(255, 0, 67, 122),
+                    hiveData.colorValue ?? Color(0xFF099FAF),
                   ),
                 ),
               ],
@@ -488,7 +494,7 @@ class _QueueItemWidgetState extends State<QueueItemWidget> {
                   flex: 1,
                   child: _buildElevatedButton(
                       'Call',
-                      const Color.fromARGB(255, 0, 67, 122),
+                      hiveData.colorValue ?? Color(0xFF099FAF),
                       buttonHeight,
                       _callQueue),
                 ),

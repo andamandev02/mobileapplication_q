@@ -1,8 +1,6 @@
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
-import 'package:provider/provider.dart';
-import '../provider/provider.dart';
 import 'TabData.dart';
 import '../api/brach/brachlist.dart';
 import '../api/queue/crud.dart';
@@ -45,9 +43,24 @@ class _Tab1State extends State<Tab1> {
 
   bool _isButtonDisabled = false;
 
+  late Box giveNameBox;
+  bool? isChecked;
+  final String boxName = 'GiveNameBox';
+
   @override
   void initState() {
     super.initState();
+    openHiveBox();
+  }
+
+  Future<void> openHiveBox() async {
+    giveNameBox = await Hive.openBox<String>(boxName);
+    String? storedValue = giveNameBox.get('GiveName');
+    if (storedValue == 'Checked') {
+      setState(() {
+        isChecked = true;
+      });
+    }
   }
 
   @override
@@ -156,7 +169,6 @@ class _Tab1State extends State<Tab1> {
         : null;
 
     final countPerGroup = getCountPerBranchServiceGroup(TQOKK);
-    final hiveData = Provider.of<DataProvider>(context);
 
     // รับขนาดหน้าจอ
     final size = MediaQuery.of(context).size;
@@ -194,7 +206,8 @@ class _Tab1State extends State<Tab1> {
                                         .titleLarge
                                         ?.copyWith(
                                           fontSize: fontSize,
-                                          color: hiveData.colorValue,
+                                          color: const Color.fromARGB(
+                                              255, 0, 67, 122),
                                         ),
                                     textAlign: TextAlign.center,
                                   ),
@@ -224,7 +237,8 @@ class _Tab1State extends State<Tab1> {
                                         .titleLarge
                                         ?.copyWith(
                                           fontSize: fontSize,
-                                          color: hiveData.colorValue,
+                                          color: const Color.fromARGB(
+                                              255, 0, 67, 122),
                                         ),
                                     textAlign: TextAlign.center,
                                   ),
@@ -235,7 +249,8 @@ class _Tab1State extends State<Tab1> {
                                         .titleLarge
                                         ?.copyWith(
                                           fontSize: fontSize,
-                                          color: hiveData.colorValue,
+                                          color: const Color.fromARGB(
+                                              255, 0, 67, 122),
                                           fontWeight: FontWeight.bold,
                                         ),
                                     textAlign: TextAlign.center,
@@ -254,7 +269,8 @@ class _Tab1State extends State<Tab1> {
                                         .titleLarge
                                         ?.copyWith(
                                           fontSize: fontSize,
-                                          color: hiveData.colorValue,
+                                          color: const Color.fromARGB(
+                                              255, 0, 67, 122),
                                           // fontWeight: FontWeight.bold,
                                         ),
                                     textAlign: TextAlign.center,
@@ -267,7 +283,8 @@ class _Tab1State extends State<Tab1> {
                                           .titleLarge
                                           ?.copyWith(
                                             fontSize: fontSize,
-                                            color: hiveData.colorValue,
+                                            color: const Color.fromARGB(
+                                                255, 0, 67, 122),
                                             fontWeight: FontWeight.bold,
                                           ),
                                       textAlign: TextAlign.center,
@@ -280,7 +297,8 @@ class _Tab1State extends State<Tab1> {
                                           .titleLarge
                                           ?.copyWith(
                                             fontSize: fontSize,
-                                            color: hiveData.colorValue,
+                                            color: const Color.fromARGB(
+                                                255, 0, 67, 122),
                                             fontWeight: FontWeight.bold,
                                           ),
                                       textAlign: TextAlign.center,
@@ -294,7 +312,8 @@ class _Tab1State extends State<Tab1> {
                                 padding: EdgeInsets.all(size.height * 0.01),
                                 decoration: BoxDecoration(
                                   border: Border.all(
-                                    color: hiveData.colorValue ?? Colors.white,
+                                    color:
+                                        const Color.fromARGB(255, 0, 67, 122),
                                   ),
                                   borderRadius: BorderRadius.circular(50),
                                 ),
@@ -318,7 +337,8 @@ class _Tab1State extends State<Tab1> {
                                                     ?.copyWith(
                                                       fontSize: fontSize * 1.5,
                                                       color:
-                                                          hiveData.colorValue,
+                                                          const Color.fromARGB(
+                                                              255, 0, 67, 122),
                                                       fontWeight:
                                                           FontWeight.bold,
                                                     ),
@@ -403,7 +423,8 @@ class _Tab1State extends State<Tab1> {
                               },
                         style: ElevatedButton.styleFrom(
                           foregroundColor: Colors.white,
-                          backgroundColor: hiveData.colorValue,
+                          backgroundColor:
+                              const Color.fromARGB(255, 0, 67, 122),
                           padding: EdgeInsets.symmetric(
                               vertical: size.height * 0.00),
                           minimumSize: Size(double.infinity, buttonHeight),
@@ -606,7 +627,8 @@ class _Tab1State extends State<Tab1> {
                                 },
                           style: ElevatedButton.styleFrom(
                             foregroundColor: Colors.white,
-                            backgroundColor: hiveData.colorValue,
+                            backgroundColor:
+                                const Color.fromARGB(255, 0, 67, 122),
                             padding: EdgeInsets.symmetric(
                                 vertical: size.height * 0.00),
                             minimumSize: Size(double.infinity, buttonHeight),
@@ -732,7 +754,8 @@ class _Tab1State extends State<Tab1> {
                                 },
                           style: ElevatedButton.styleFrom(
                             foregroundColor: Colors.white,
-                            backgroundColor: hiveData.colorValue,
+                            backgroundColor:
+                                const Color.fromARGB(255, 0, 67, 122),
                             padding: EdgeInsets.symmetric(
                                 vertical: size.height * 0.00),
                             minimumSize: Size(double.infinity, buttonHeight),
@@ -848,29 +871,31 @@ class _Tab1State extends State<Tab1> {
               children: [
                 Flexible(
                   child: Numpad(
-                      onSubmit: (pax, name, phone) async {
-                        try {
-                          await ClassCQueue().createQueue(
-                            context: context,
-                            Pax: pax,
-                            Customername: name,
-                            Customerphone: phone,
-                            TicketKioskDetail: T1,
-                            Branch: tabData.branches,
-                            Kiosk: tabData.counters,
-                          );
+                    onSubmit: (pax, name, phone) async {
+                      try {
+                        await ClassCQueue().createQueue(
+                          context: context,
+                          Pax: pax,
+                          Customername: name,
+                          Customerphone: phone,
+                          TicketKioskDetail: T1,
+                          Branch: tabData.branches,
+                          Kiosk: tabData.counters,
+                        );
 
-                          await Future.delayed(const Duration(seconds: 2));
-                          await fetchCallerQueueAll();
-                          await fetchSearchQueue();
-                        } catch (e) {
-                          String ToMsg = "เกิดข้อผิดพลาด";
-                          String queueNumber = '$e';
-                          SnackBarHelper.showErrorSnackBar(
-                              context, ToMsg, queueNumber);
-                        }
-                      },
-                      T1: T1),
+                        await Future.delayed(const Duration(seconds: 2));
+                        await fetchCallerQueueAll();
+                        await fetchSearchQueue();
+                      } catch (e) {
+                        String ToMsg = "เกิดข้อผิดพลาด";
+                        String queueNumber = '$e';
+                        SnackBarHelper.showErrorSnackBar(
+                            context, ToMsg, queueNumber);
+                      }
+                    },
+                    T1: T1,
+                    isChecked: isChecked ?? false,
+                  ),
                 ),
               ],
             ),

@@ -1,36 +1,31 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
+import 'Tabs/tabs.dart';
 import 'api/brach/brachlist.dart';
-import 'counter.dart';
-import 'provider/provider.dart';
 
-class BranchListS extends StatefulWidget {
-  const BranchListS({super.key});
+class CounterListS extends StatefulWidget {
+  final Map<String, dynamic> branches;
+  const CounterListS({super.key, required this.branches});
 
   @override
-  State<BranchListS> createState() => _BranchListSState();
+  State<CounterListS> createState() => _CounterListSState();
 }
 
-class _BranchListSState extends State<BranchListS> {
-  List<Map<String, dynamic>> _branches = [];
+class _CounterListSState extends State<CounterListS> {
+  late List<Map<String, dynamic>> _counters = [];
 
   @override
   void initState() {
     super.initState();
+    fetchService(widget.branches['branch_id']);
   }
 
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-    fetchBranchList();
-  }
-
-  Future<void> fetchBranchList() async {
-    ClassBranch.branchlist(
+  Future<void> fetchService(String branchid) async {
+    await ClassBranch.counter(
       context: context,
-      onBranchListLoaded: (LoadingBranchList) {
+      branchid: branchid,
+      onTicketKioskLoaded: (loadedKiosk) {
         setState(() {
-          _branches = LoadingBranchList;
+          _counters = loadedKiosk;
         });
       },
     );
@@ -38,18 +33,16 @@ class _BranchListSState extends State<BranchListS> {
 
   @override
   Widget build(BuildContext context) {
-    final hiveData = Provider.of<DataProvider>(context);
-
     final size = MediaQuery.of(context).size;
     final buttonHeight = size.height * 0.06;
-    final buttonWidth = size.width * 0.2;
+    final iconSize = size.height * 0.05;
     final fontSize = size.height * 0.02;
 
     return Scaffold(
-      backgroundColor: hiveData.colorValue,
+      backgroundColor: const Color.fromARGB(255, 0, 67, 122),
       appBar: AppBar(
         title: Text(
-          'เลือกสาขา | Select Branch',
+          'เลือกเค้าเตอร์ | Select Counter',
           style: TextStyle(
             fontSize: fontSize,
             color: Colors.white,
@@ -58,7 +51,7 @@ class _BranchListSState extends State<BranchListS> {
         iconTheme: const IconThemeData(
           color: Colors.white,
         ),
-        backgroundColor: hiveData.colorValue,
+        backgroundColor: const Color.fromARGB(255, 0, 67, 122),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -70,9 +63,9 @@ class _BranchListSState extends State<BranchListS> {
             final double fontSize = size.height * 0.02;
 
             return ListView.builder(
-              itemCount: _branches.length,
+              itemCount: _counters.length,
               itemBuilder: (context, index) {
-                final branchName = _branches[index]['branch_name'];
+                final branchName = _counters[index]['t_kiosk_name'];
 
                 return Padding(
                   padding: const EdgeInsets.symmetric(vertical: 8.0),
@@ -83,13 +76,14 @@ class _BranchListSState extends State<BranchListS> {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                            builder: (context) =>
-                                CounterListS(branches: _branches[index]),
+                            builder: (context) => TabS(
+                                branches: widget.branches,
+                                counters: _counters[index]),
                           ),
                         );
                       },
                       style: ElevatedButton.styleFrom(
-                        foregroundColor: hiveData.colorValue,
+                        foregroundColor: const Color.fromARGB(255, 0, 67, 122),
                         backgroundColor:
                             const Color.fromARGB(255, 255, 255, 255),
                         padding: const EdgeInsets.symmetric(
@@ -103,7 +97,9 @@ class _BranchListSState extends State<BranchListS> {
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          const SizedBox(width: 10),
+                          const SizedBox(
+                            width: 10,
+                          ),
                           Expanded(
                             child: Text(
                               branchName,
@@ -115,7 +111,7 @@ class _BranchListSState extends State<BranchListS> {
                           Icon(
                             Icons.arrow_forward,
                             size: iconSize,
-                            color: hiveData.colorValue,
+                            color: const Color.fromARGB(255, 0, 67, 122),
                           ),
                         ],
                       ),

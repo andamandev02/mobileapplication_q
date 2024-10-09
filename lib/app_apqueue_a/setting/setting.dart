@@ -3,10 +3,8 @@ import 'package:flutter/material.dart';
 import 'dart:async';
 import 'package:blue_thermal_printer/blue_thermal_printer.dart';
 import 'package:flutter/services.dart';
-import 'package:provider/provider.dart';
 
 import '../print/testprint.dart';
-import '../provider/provider.dart';
 
 class SettingScreen extends StatefulWidget {
   const SettingScreen({super.key});
@@ -25,45 +23,33 @@ class _SettingScreenState extends State<SettingScreen> {
   bool _connected = false;
   TestPrint testPrint = TestPrint();
 
+  late Box giveNameBox;
   bool isChecked = false;
-
-  late TextEditingController _colorController = TextEditingController();
-  Color _selectedColor = Colors.white;
-
-  void _updateColor() {
-    String colorString = _colorController.text;
-    if (RegExp(r'^#([0-9A-Fa-f]{3}){1,2}$').hasMatch(colorString)) {
-      setState(() {
-        _selectedColor =
-            Color(int.parse(colorString.replaceFirst('#', '0xff')));
-        Provider.of<DataProvider>(context, listen: false)
-            .setColorValue(_selectedColor);
-        setState(() {});
-      });
-    } else {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('โปรดป้อนรหัสสีที่ถูกต้อง')),
-      );
-    }
-  }
+  final String boxName = 'GiveNameBox';
 
   @override
   void initState() {
     super.initState();
+    initPlatformState();
+    openHiveBox();
   }
 
-  late DataProvider _dataProvider;
-
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-    _dataProvider = Provider.of<DataProvider>(context);
-    initPlatformState();
+  Future<void> openHiveBox() async {
+    giveNameBox = await Hive.openBox<String>(boxName);
+    // อ่านค่าจาก Hive เมื่อเปิดโปรแกรม
+    String? storedValue = giveNameBox.get('GiveName');
+    if (storedValue == 'Checked') {
+      setState(() {
+        isChecked = true;
+      });
+    }
   }
 
   Future<void> addToHive(String GiveName) async {
-    Provider.of<DataProvider>(context, listen: false)
-        .setGiveNameValue(GiveName);
+    if (giveNameBox.containsKey('GiveName')) {
+      await giveNameBox.delete('GiveName');
+    }
+    await giveNameBox.put('GiveName', GiveName);
     setState(() {});
   }
 
@@ -74,31 +60,17 @@ class _SettingScreenState extends State<SettingScreen> {
     });
   }
 
-  String colorToHex(Color color) {
-    return '#${color.value.toRadixString(16).substring(2).toUpperCase()}'; // แปลงเป็น HEX String
-  }
-
   Future<void> initPlatformState() async {
-    final hiveData = Provider.of<DataProvider>(context);
-    String? storedValue = hiveData.givenameValue ?? "Loading...";
-    if (storedValue == 'Checked') {
-      setState(() {
-        isChecked = true;
-      });
-    }
-    Color colorString = hiveData.colorValue ?? const Color(0xFF099FAF);
-    setState(() {
-      _selectedColor = colorString;
-      _colorController.text = colorToHex(colorString);
-    });
-
     bool? isConnected = await bluetooth.isConnected;
     List<BluetoothDevice> devices = [];
     try {
       devices = await bluetooth.getBondedDevices();
     } on PlatformException {}
 
-    String? savedAddress = hiveData.printerValue ?? "Loading...";
+    // Load previously connected device address from Hive
+    var PrinterBox = await Hive.openBox('PrinterDevice');
+    String? savedAddress = PrinterBox.get('PrinterDevice');
+    await PrinterBox.close();
 
     if (savedAddress != null) {
       BluetoothDevice? savedDevice = devices.firstWhere(
@@ -176,10 +148,8 @@ class _SettingScreenState extends State<SettingScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final hiveData = Provider.of<DataProvider>(context);
-
     return Scaffold(
-      backgroundColor: hiveData.colorValue,
+      backgroundColor: const Color.fromARGB(255, 0, 67, 122),
       appBar: AppBar(
         title: const Text(
           'การตั้งค่าระบบ | Setting Systems',
@@ -191,7 +161,7 @@ class _SettingScreenState extends State<SettingScreen> {
         iconTheme: const IconThemeData(
           color: Colors.white,
         ),
-        backgroundColor: hiveData.colorValue,
+        backgroundColor: const Color.fromARGB(255, 0, 67, 122),
       ),
       body: Padding(
         padding: const EdgeInsets.all(8.0),
@@ -262,45 +232,6 @@ class _SettingScreenState extends State<SettingScreen> {
               ),
             ),
             const SizedBox(height: 20),
-            Center(
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Container(
-                    width: 40,
-                    height: 40,
-                    decoration: BoxDecoration(
-                      color: _selectedColor,
-                      border:
-                          Border.all(color: Colors.white, width: 1), // ขอบสีขาว
-                      borderRadius: BorderRadius.circular(8), // มุมมน
-                    ),
-                  ),
-                  const SizedBox(width: 20),
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment:
-                          CrossAxisAlignment.start, // จัดให้ข้อความอยู่ทางซ้าย
-                      children: [
-                        TextField(
-                          controller: _colorController,
-                          decoration: InputDecoration(
-                            labelText:
-                                'กรุณากรอกรหัสสี | Enter color code (e.g., #FF5733)',
-                            border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(50.0)),
-                            filled: true,
-                            fillColor: Colors.white, // พื้นหลังของ TextField
-                          ),
-                          style: TextStyle(color: Colors.black), // สีของข้อความ
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            const SizedBox(height: 20),
             Row(
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
@@ -316,13 +247,6 @@ class _SettingScreenState extends State<SettingScreen> {
                     'ทำการ เพิ่มชื่อ และ เบอร์โทรศัพท์ของลูกค้าได้\nGive Name & Phone In Numpad',
                     style: TextStyle(color: Colors.white, fontSize: 14)),
               ],
-            ),
-            const SizedBox(height: 20),
-            ElevatedButton(
-              style: ElevatedButton.styleFrom(backgroundColor: Colors.brown),
-              onPressed: _updateColor,
-              child: const Text('บันทึกสี | Set Color',
-                  style: TextStyle(color: Colors.white)),
             ),
           ],
         ),
@@ -355,9 +279,9 @@ class _SettingScreenState extends State<SettingScreen> {
       bool? isConnected = await bluetooth.isConnected;
       if (!isConnected!) {
         bluetooth.connect(_device!).then((_) async {
-          Provider.of<DataProvider>(context, listen: false)
-              .setPrinterValue(_device!.address!);
-
+          var PrinterBox = await Hive.openBox('PrinterDevice');
+          await PrinterBox.put('PrinterDevice', _device!.address);
+          await PrinterBox.close();
           if (mounted) {
             setState(() => _connected = true);
           }

@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
-import '../provider/provider.dart';
 import 'TabData.dart';
 import 'tabs1.dart';
 import 'tabs2.dart';
@@ -45,11 +43,6 @@ class _TabSState extends State<TabS> with SingleTickerProviderStateMixin {
   @override
   void initState() {
     super.initState();
-  }
-
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
     _tabController = TabController(length: 4, vsync: this);
     fetchSearchQueue();
     fetchCountersDetail(widget.branches['branch_id']);
@@ -106,8 +99,6 @@ class _TabSState extends State<TabS> with SingleTickerProviderStateMixin {
 
   @override
   Widget build(BuildContext context) {
-    final hiveData = Provider.of<DataProvider>(context);
-
     final size = MediaQuery.of(context).size;
     final buttonHeight = size.height * 0.06;
     final iconSize = size.height * 0.05;
@@ -120,7 +111,7 @@ class _TabSState extends State<TabS> with SingleTickerProviderStateMixin {
         counters: widget.counters,
         countersd: CountersDetail,
         child: Scaffold(
-          backgroundColor: hiveData.colorValue,
+          backgroundColor: const Color.fromARGB(255, 0, 67, 122),
           appBar: AppBar(
             title: Text(
               'Branch ' + branchName + '-' + branchNameC,
@@ -132,7 +123,7 @@ class _TabSState extends State<TabS> with SingleTickerProviderStateMixin {
             iconTheme: const IconThemeData(
               color: Colors.white,
             ),
-            backgroundColor: hiveData.colorValue,
+            backgroundColor: const Color.fromARGB(255, 0, 67, 122),
             actions: [
               IconButton(
                 icon: const Icon(Icons.delete),

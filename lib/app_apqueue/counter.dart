@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'Tabs/tabs.dart';
 import 'api/brach/brachlist.dart';
+import 'provider/provider.dart';
 
 class CounterListS extends StatefulWidget {
   final Map<String, dynamic> branches;
@@ -16,6 +18,11 @@ class _CounterListSState extends State<CounterListS> {
   @override
   void initState() {
     super.initState();
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
     fetchService(widget.branches['branch_id']);
   }
 
@@ -33,13 +40,15 @@ class _CounterListSState extends State<CounterListS> {
 
   @override
   Widget build(BuildContext context) {
+    final hiveData = Provider.of<DataProvider>(context);
+
     final size = MediaQuery.of(context).size;
     final buttonHeight = size.height * 0.06;
     final iconSize = size.height * 0.05;
     final fontSize = size.height * 0.02;
 
     return Scaffold(
-      backgroundColor: const Color.fromARGB(255, 0, 67, 122),
+      backgroundColor: hiveData.colorValue,
       appBar: AppBar(
         title: Text(
           'เลือกเค้าเตอร์ | Select Counter',
@@ -51,7 +60,7 @@ class _CounterListSState extends State<CounterListS> {
         iconTheme: const IconThemeData(
           color: Colors.white,
         ),
-        backgroundColor: const Color.fromARGB(255, 0, 67, 122),
+        backgroundColor: hiveData.colorValue,
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -83,7 +92,7 @@ class _CounterListSState extends State<CounterListS> {
                         );
                       },
                       style: ElevatedButton.styleFrom(
-                        foregroundColor: const Color.fromARGB(255, 0, 67, 122),
+                        foregroundColor: hiveData.colorValue,
                         backgroundColor:
                             const Color.fromARGB(255, 255, 255, 255),
                         padding: const EdgeInsets.symmetric(
@@ -111,7 +120,7 @@ class _CounterListSState extends State<CounterListS> {
                           Icon(
                             Icons.arrow_forward,
                             size: iconSize,
-                            color: const Color.fromARGB(255, 0, 67, 122),
+                            color: hiveData.colorValue,
                           ),
                         ],
                       ),

@@ -1,18 +1,15 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
-
-import '../provider/provider.dart';
 
 class Numpad extends StatefulWidget {
   final Function(String, String, String) onSubmit;
-  // final bool isChecked;
+  final bool isChecked;
   final Map<String, dynamic> T1;
 
   Numpad({
     super.key,
     required this.onSubmit,
     required this.T1,
-    // required this.isChecked,
+    required this.isChecked,
   });
 
   @override
@@ -31,26 +28,12 @@ class _NumpadState extends State<Numpad> {
   @override
   void initState() {
     super.initState();
-  }
-
-  bool isChecked = false;
-  late DataProvider _dataProvider;
-
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-    _dataProvider = Provider.of<DataProvider>(context);
-    initPlatformState();
-  }
-
-  Future<void> initPlatformState() async {
-    final hiveData = Provider.of<DataProvider>(context);
-    String? storedValue = hiveData.givenameValue ?? "Loading...";
-    if (storedValue == 'Checked') {
-      setState(() {
-        isChecked = true;
-      });
-    }
+    _focusNode.addListener(() {
+      if (_focusNode.hasFocus) {
+        // เมื่อ TextField ถูกโฟกัส
+        print("TextField focused");
+      }
+    });
   }
 
   @override
@@ -61,8 +44,6 @@ class _NumpadState extends State<Numpad> {
 
   @override
   Widget build(BuildContext context) {
-    final hiveData = Provider.of<DataProvider>(context);
-
     final size = MediaQuery.of(context).size;
     final fontSize = size.height * 0.02; // ขนาดฟอนต์ยืดหยุ่น
     final buttonHeight = size.height * 0.05; // ขนาดปุ่มยืดหยุ่น
@@ -126,7 +107,7 @@ class _NumpadState extends State<Numpad> {
                       onPressed: () {
                         final inputValue = _controller.text;
                         if (inputValue.isNotEmpty) {
-                          if (isChecked) {
+                          if (widget.isChecked) {
                             _pageController.nextPage(
                               duration: const Duration(milliseconds: 300),
                               curve: Curves.easeInOut,
@@ -177,12 +158,12 @@ class _NumpadState extends State<Numpad> {
                       },
                       style: ElevatedButton.styleFrom(
                         foregroundColor: Colors.white,
-                        backgroundColor: hiveData.colorValue,
+                        backgroundColor: const Color.fromARGB(255, 0, 67, 122),
                         padding: EdgeInsets.symmetric(
                             vertical: buttonHeight * 0.6), // ปรับขนาดปุ่ม
                       ),
                       child: Text(
-                        isChecked ? 'ต่อไป | NEXT' : 'ยืนยัน | SUBMIT',
+                        widget.isChecked ? 'ต่อไป | NEXT' : 'ยืนยัน | SUBMIT',
                         style: TextStyle(fontSize: fontSize),
                       ),
                     ),
@@ -275,7 +256,7 @@ class _NumpadState extends State<Numpad> {
                       },
                       style: ElevatedButton.styleFrom(
                         foregroundColor: Colors.white,
-                        backgroundColor: hiveData.colorValue,
+                        backgroundColor: const Color.fromARGB(255, 0, 67, 122),
                         padding:
                             EdgeInsets.symmetric(vertical: buttonHeight * 0.6),
                       ),
@@ -315,7 +296,6 @@ class _NumpadState extends State<Numpad> {
     // กำหนดขนาดสูงสุดสำหรับปุ่ม
     final double maxButtonSize = 100.0; // ขนาดสูงสุดของปุ่มแต่ละอัน
     final double buttonSize = (size.width * 0.3).clamp(50.0, maxButtonSize);
-    final hiveData = Provider.of<DataProvider>(context);
 
     return Expanded(
       child: GridView.builder(
@@ -344,8 +324,9 @@ class _NumpadState extends State<Numpad> {
               }
             },
             style: ElevatedButton.styleFrom(
-              backgroundColor:
-                  buttonText == 'delete' ? Colors.red : hiveData.colorValue,
+              backgroundColor: buttonText == 'delete'
+                  ? Colors.red
+                  : const Color.fromARGB(255, 0, 67, 122),
               shape: const CircleBorder(),
               padding: EdgeInsets.zero,
             ),
@@ -383,7 +364,6 @@ class _NumpadState extends State<Numpad> {
     // กำหนดขนาดสูงสุดสำหรับปุ่ม
     final double maxButtonSize = 100.0; // ขนาดสูงสุดของปุ่มแต่ละอัน
     final double buttonSize = (size.width * 0.3).clamp(50.0, maxButtonSize);
-    final hiveData = Provider.of<DataProvider>(context);
 
     return Expanded(
       child: GridView.builder(
@@ -412,8 +392,9 @@ class _NumpadState extends State<Numpad> {
               }
             },
             style: ElevatedButton.styleFrom(
-              backgroundColor:
-                  buttonText == 'delete' ? Colors.red : hiveData.colorValue,
+              backgroundColor: buttonText == 'delete'
+                  ? Colors.red
+                  : const Color.fromARGB(255, 0, 67, 122),
               shape: const CircleBorder(),
               padding: EdgeInsets.zero,
             ),

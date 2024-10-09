@@ -1,9 +1,7 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
-import 'package:provider/provider.dart';
 import '../loadingsreen.dart';
-import '../provider/provider.dart';
 import 'TabData.dart';
 import '../api/queue/crud.dart';
 import '../api/queue/queuelist.dart';
@@ -183,7 +181,6 @@ class _Tab4State extends State<Tab4> {
 
   @override
   Widget build(BuildContext context) {
-    final hiveData = Provider.of<DataProvider>(context);
     final size = MediaQuery.of(context).size;
     final buttonHeight = size.height * 0.06;
     final iconSize = size.height * 0.05;
@@ -200,7 +197,7 @@ class _Tab4State extends State<Tab4> {
                   decoration: InputDecoration(
                     labelText: 'พิมพ์เพื่อค้นหา Q NO | Search Q No',
                     labelStyle: TextStyle(
-                      color: hiveData.colorValue ?? Color(0xFF099FAF),
+                      color: const Color.fromARGB(255, 0, 67, 122),
                       fontSize: fontSize,
                     ),
                     border: OutlineInputBorder(
@@ -214,16 +211,16 @@ class _Tab4State extends State<Tab4> {
                     focusedBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(
                           50.0), // กำหนดรัศมีของขอบมนเมื่อโฟกัส
-                      borderSide: BorderSide(
-                        color: hiveData.colorValue ?? Color(0xFF099FAF),
+                      borderSide: const BorderSide(
+                        color: const Color.fromARGB(255, 0, 67, 122),
                         width: 2.0, // ความหนาของเส้นขอบเมื่อโฟกัส
                       ),
                     ),
                     enabledBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(
                           50.0), // กำหนดรัศมีของขอบมนเมื่อเปิดใช้งาน
-                      borderSide: BorderSide(
-                        color: hiveData.colorValue ?? Color(0xFF099FAF),
+                      borderSide: const BorderSide(
+                        color: const Color.fromARGB(255, 0, 67, 122),
                         width: 2.0, // ความหนาของเส้นขอบเมื่อเปิดใช้งาน
                       ),
                     ),
@@ -234,7 +231,7 @@ class _Tab4State extends State<Tab4> {
                             : Icons.search, // เปลี่ยนไอคอนตามค่าของ TextField
                         color: _controller.text.isNotEmpty
                             ? const Color.fromRGBO(255, 0, 0, 1)
-                            : hiveData.colorValue ?? Color(0xFF099FAF),
+                            : const Color.fromARGB(255, 0, 67, 122),
                       ),
                       onPressed: () {
                         if (_controller.text.isNotEmpty) {
@@ -265,9 +262,9 @@ class _Tab4State extends State<Tab4> {
                     fillColor: const Color.fromARGB(255, 255, 255, 255),
                     filled: true, // ให้มีสีพื้นหลัง
                   ),
-                  style: TextStyle(
+                  style: const TextStyle(
                     fontSize: 25,
-                    color: hiveData.colorValue ?? Color(0xFF099FAF),
+                    color: const Color.fromARGB(255, 0, 67, 122),
                   ),
                   onChanged: (value) {
                     setState(() {
@@ -399,7 +396,7 @@ class _Tab4State extends State<Tab4> {
                     Icons.filter_list,
                     color: Color.fromARGB(255, 255, 255, 255),
                   ),
-                  color: hiveData.colorValue ?? Color(0xFF099FAF),
+                  color: const Color.fromARGB(255, 0, 67, 122),
                 ),
               )
             ],
@@ -555,7 +552,6 @@ class _QueueItemWidgetState extends State<QueueItemWidget> {
 
   @override
   Widget build(BuildContext context) {
-    final hiveData = Provider.of<DataProvider>(context);
     final size = MediaQuery.of(context).size;
     final buttonHeight = size.height * 0.06;
     final buttonWidth = size.width * 0.2;
@@ -581,7 +577,7 @@ class _QueueItemWidgetState extends State<QueueItemWidget> {
                   child: _buildText(
                     "${widget.item['queue_no']}",
                     fontSize * 1.5,
-                    hiveData.colorValue ?? Color(0xFF099FAF),
+                    const Color.fromARGB(255, 0, 67, 122),
                   ),
                 ),
                 Expanded(
@@ -591,7 +587,7 @@ class _QueueItemWidgetState extends State<QueueItemWidget> {
                       "N:${widget.item['customer_name'] ?? 'NoName'}",
                     ),
                     fontSize,
-                    hiveData.colorValue ?? Color(0xFF099FAF),
+                    const Color.fromARGB(255, 0, 67, 122),
                   ),
                 ),
                 Expanded(
@@ -599,7 +595,7 @@ class _QueueItemWidgetState extends State<QueueItemWidget> {
                   child: _buildText(
                     "T:${widget.item['phone_number'] ?? 'NoPhone'}",
                     fontSize,
-                    hiveData.colorValue ?? Color(0xFF099FAF),
+                    const Color.fromARGB(255, 0, 67, 122),
                   ),
                 ),
               ],
@@ -613,7 +609,7 @@ class _QueueItemWidgetState extends State<QueueItemWidget> {
                   //   child: _buildText(
                   //     widget.item['queue_no'],
                   //     fontSize,
-                  //     hiveData.colorValue ?? Color(0xFF099FAF),
+                  //     const Color.fromARGB(255, 0, 67, 122),
                   //   ),
                   // ),
                   Expanded(
@@ -637,14 +633,14 @@ class _QueueItemWidgetState extends State<QueueItemWidget> {
                     child: _buildText(
                       _getStatusText(widget.status),
                       fontSize,
-                      hiveData.colorValue ?? Color(0xFF099FAF),
+                      const Color.fromARGB(255, 0, 67, 122),
                     ),
                   ),
                   Expanded(
                     flex: 1,
                     child: _buildElevatedButton(
                         'Call',
-                        hiveData.colorValue ?? Color(0xFF099FAF),
+                        const Color.fromARGB(255, 0, 67, 122),
                         widget.buttonHeight,
                         _callQueue),
                   ),
@@ -663,7 +659,7 @@ class _QueueItemWidgetState extends State<QueueItemWidget> {
                   //   child: _buildText(
                   //     widget.item['queue_no'],
                   //     fontSize,
-                  //     hiveData.colorValue ?? Color(0xFF099FAF),
+                  //     const Color.fromARGB(255, 0, 67, 122),
                   //   ),
                   // ),
                   Expanded(
@@ -687,7 +683,7 @@ class _QueueItemWidgetState extends State<QueueItemWidget> {
                     child: _buildText(
                       _getStatusText(widget.status),
                       fontSize,
-                      hiveData.colorValue ?? Color(0xFF099FAF),
+                      const Color.fromARGB(255, 0, 67, 122),
                     ),
                   ),
                   Expanded(
@@ -722,7 +718,7 @@ class _QueueItemWidgetState extends State<QueueItemWidget> {
                   //   child: _buildText(
                   //     widget.item['queue_no'],
                   //     fontSize,
-                  //     hiveData.colorValue ?? Color(0xFF099FAF),
+                  //     const Color.fromARGB(255, 0, 67, 122),
                   //   ),
                   // ),
                   Expanded(
@@ -754,7 +750,7 @@ class _QueueItemWidgetState extends State<QueueItemWidget> {
                     child: _buildText(
                       _getStatusText(widget.status),
                       fontSize,
-                      hiveData.colorValue ?? Color(0xFF099FAF),
+                      const Color.fromARGB(255, 0, 67, 122),
                     ),
                   ),
                 ] else if (widget.status == QueueStatus.ended) ...[
@@ -763,7 +759,7 @@ class _QueueItemWidgetState extends State<QueueItemWidget> {
                   //   child: _buildText(
                   //     widget.item['queue_no'],
                   //     fontSize,
-                  //     hiveData.colorValue ?? Color(0xFF099FAF),
+                  //     const Color.fromARGB(255, 0, 67, 122),
                   //   ),
                   // ),
                   Expanded(
@@ -803,7 +799,7 @@ class _QueueItemWidgetState extends State<QueueItemWidget> {
                     child: _buildText(
                       _getStatusText(widget.status),
                       fontSize,
-                      hiveData.colorValue ?? Color(0xFF099FAF),
+                      const Color.fromARGB(255, 0, 67, 122),
                     ),
                   ),
                 ] else if (widget.status == QueueStatus.finished) ...[
@@ -812,7 +808,7 @@ class _QueueItemWidgetState extends State<QueueItemWidget> {
                   //   child: _buildText(
                   //     widget.item['queue_no'],
                   //     fontSize,
-                  //     hiveData.colorValue ?? Color(0xFF099FAF),
+                  //     const Color.fromARGB(255, 0, 67, 122),
                   //   ),
                   // ),
                   Expanded(
@@ -852,7 +848,7 @@ class _QueueItemWidgetState extends State<QueueItemWidget> {
                     child: _buildText(
                       _getStatusText(widget.status),
                       fontSize,
-                      hiveData.colorValue ?? Color(0xFF099FAF),
+                      const Color.fromARGB(255, 0, 67, 122),
                     ),
                   ),
                 ],
@@ -899,7 +895,6 @@ class _QueueItemWidgetState extends State<QueueItemWidget> {
     double height,
     Future<void> Function(BuildContext) onPressed,
   ) {
-    final hiveData = Provider.of<DataProvider>(context);
     final size = MediaQuery.of(context).size;
     final fontSize = size.height * 0.02;
     return Expanded(

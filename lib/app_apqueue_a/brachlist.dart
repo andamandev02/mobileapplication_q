@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 import 'api/brach/brachlist.dart';
 import 'counter.dart';
-import 'provider/provider.dart';
 
 class BranchListS extends StatefulWidget {
   const BranchListS({super.key});
@@ -17,11 +15,6 @@ class _BranchListSState extends State<BranchListS> {
   @override
   void initState() {
     super.initState();
-  }
-
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
     fetchBranchList();
   }
 
@@ -38,15 +31,13 @@ class _BranchListSState extends State<BranchListS> {
 
   @override
   Widget build(BuildContext context) {
-    final hiveData = Provider.of<DataProvider>(context);
-
     final size = MediaQuery.of(context).size;
     final buttonHeight = size.height * 0.06;
     final buttonWidth = size.width * 0.2;
     final fontSize = size.height * 0.02;
 
     return Scaffold(
-      backgroundColor: hiveData.colorValue,
+      backgroundColor: const Color.fromARGB(255, 0, 67, 122),
       appBar: AppBar(
         title: Text(
           'เลือกสาขา | Select Branch',
@@ -58,7 +49,7 @@ class _BranchListSState extends State<BranchListS> {
         iconTheme: const IconThemeData(
           color: Colors.white,
         ),
-        backgroundColor: hiveData.colorValue,
+        backgroundColor: const Color.fromARGB(255, 0, 67, 122),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -89,7 +80,7 @@ class _BranchListSState extends State<BranchListS> {
                         );
                       },
                       style: ElevatedButton.styleFrom(
-                        foregroundColor: hiveData.colorValue,
+                        foregroundColor: const Color.fromARGB(255, 0, 67, 122),
                         backgroundColor:
                             const Color.fromARGB(255, 255, 255, 255),
                         padding: const EdgeInsets.symmetric(
@@ -115,7 +106,7 @@ class _BranchListSState extends State<BranchListS> {
                           Icon(
                             Icons.arrow_forward,
                             size: iconSize,
-                            color: hiveData.colorValue,
+                            color: const Color.fromARGB(255, 0, 67, 122),
                           ),
                         ],
                       ),

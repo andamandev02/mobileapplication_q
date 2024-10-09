@@ -5,9 +5,7 @@ import 'package:blue_thermal_printer/blue_thermal_printer.dart';
 import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
 import 'package:http/http.dart' as http;
-import 'package:provider/provider.dart';
 import 'package:socket_io_client/socket_io_client.dart' as IO;
-import '../../provider/provider.dart';
 import '../url.dart';
 import '../../print/printing.dart';
 import '../../print/printing_new.dart';
@@ -71,10 +69,6 @@ class ClassCQueue {
     double screenWidth = MediaQuery.of(context).size.width;
     double screenHeight = MediaQuery.of(context).size.height;
 
-    String DomainUrl = "";
-    final hiveData = Provider.of<DataProvider>(context);
-    DomainUrl = hiveData.domainValue ?? "";
-
     try {
       var body = jsonEncode({
         'Pax': Pax,
@@ -86,7 +80,8 @@ class ClassCQueue {
       });
 
       final response = await http.post(
-        Uri.parse('$DomainUrl/api/v1/queue-mobile/create-queue'),
+        Uri.parse(
+            'https://apq.andamandev.com/api/v1/queue-mobile/create-queue'),
         headers: <String, String>{
           HttpHeaders.contentTypeHeader: 'application/json; charset=UTF-8',
         },
@@ -181,15 +176,12 @@ class ClassCQueue {
     required String branchid,
   }) async {
     try {
-      String DomainUrl = "";
-      final hiveData = Provider.of<DataProvider>(context);
-      DomainUrl = hiveData.domainValue ?? "";
-
       final queryParameters = {
         'branchid': branchid,
       };
-      final uri = Uri.parse('$DomainUrl/api/v1/queue-mobile/mid-night')
-          .replace(queryParameters: queryParameters);
+      final uri =
+          Uri.parse('https://apq.andamandev.com/api/v1/queue-mobile/mid-night')
+              .replace(queryParameters: queryParameters);
       final response = await http.post(
         uri,
         headers: <String, String>{
@@ -203,7 +195,7 @@ class ClassCQueue {
 
       // final response = await http.post(
       //   Uri.parse(
-      //       '$DomainUrl/api/v1/queue-mobile/mid-night'),
+      //       'https://apq.andamandev.com/api/v1/queue-mobile/mid-night'),
       //   headers: <String, String>{
       //     HttpHeaders.contentTypeHeader: 'application/json; charset=UTF-8',
       //   },
@@ -256,10 +248,6 @@ class ClassCQueue {
     try {
       await initializeWebSocket();
 
-      String DomainUrl = "";
-      final hiveData = Provider.of<DataProvider>(context);
-      DomainUrl = hiveData.domainValue ?? "";
-
       var body = jsonEncode({
         'SearchQueue': jsonEncode(SearchQueue),
         'StatusQueue': jsonEncode(StatusQueue),
@@ -267,7 +255,8 @@ class ClassCQueue {
       });
 
       final response = await http.post(
-        Uri.parse('$DomainUrl/api/v1/queue-mobile/update-queue'),
+        Uri.parse(
+            'https://apq.andamandev.com/api/v1/queue-mobile/update-queue'),
         headers: <String, String>{
           HttpHeaders.contentTypeHeader: 'application/json; charset=UTF-8',
         },
@@ -360,10 +349,6 @@ class ClassCQueue {
     try {
       await initializeWebSocket();
 
-      String DomainUrl = "";
-      final hiveData = Provider.of<DataProvider>(context);
-      DomainUrl = hiveData.domainValue ?? "";
-
       var body = jsonEncode({
         'TicketKioskDetail': TicketKioskDetail,
         'Branch': Branch,
@@ -371,7 +356,7 @@ class ClassCQueue {
       });
 
       final response = await http.post(
-        Uri.parse('$DomainUrl/api/v1/queue-mobile/call-queue'),
+        Uri.parse('https://apq.andamandev.com/api/v1/queue-mobile/call-queue'),
         headers: <String, String>{
           HttpHeaders.contentTypeHeader: 'application/json; charset=UTF-8',
         },
@@ -457,16 +442,12 @@ class ClassCQueue {
     try {
       await initializeWebSocket();
 
-      String DomainUrl = "";
-      final hiveData = Provider.of<DataProvider>(context);
-      DomainUrl = hiveData.domainValue ?? "";
-
       var body = jsonEncode({
         'SearchQueue': jsonEncode(SearchQueue),
       });
 
       final response = await http.post(
-        Uri.parse('$DomainUrl/api/v1/queue-mobile/call-queue'),
+        Uri.parse('https://apq.andamandev.com/api/v1/queue-mobile/call-queue'),
         headers: <String, String>{
           HttpHeaders.contentTypeHeader: 'application/json; charset=UTF-8',
         },

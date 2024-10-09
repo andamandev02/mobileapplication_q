@@ -2,10 +2,8 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 import 'package:socket_io_client/socket_io_client.dart' as IO;
 import 'package:http/http.dart' as http;
-import '../../provider/provider.dart';
 import '../url.dart';
 
 class ClassQueue {
@@ -68,14 +66,12 @@ class ClassQueue {
     required String branchid,
     required Function(List<Map<String, dynamic>>) onSearchQueueLoaded,
   }) async {
-    String DomainUrl = "";
-    final hiveData = Provider.of<DataProvider>(context);
-    DomainUrl = hiveData.domainValue ?? "";
     try {
       final queryParameters = {
         'branchid': branchid,
       };
-      final uri = Uri.parse('$DomainUrl/api/v1/queue-mobile/search-queue')
+      final uri = Uri.parse(
+              'https://apq.andamandev.com/api/v1/queue-mobile/search-queue')
           .replace(queryParameters: queryParameters);
       final response = await http.get(
         uri,
@@ -111,13 +107,11 @@ class ClassQueue {
     required Function(List<Map<String, dynamic>>) onCallerQueueAllLoaded,
   }) async {
     try {
-      String DomainUrl = "";
-      final hiveData = Provider.of<DataProvider>(context);
-      DomainUrl = hiveData.domainValue ?? "";
       final queryParameters = {
         'branchid': branchid,
       };
-      final uri = Uri.parse('${DomainUrl}/api/v1/queue-mobile/caller-queue-all')
+      final uri = Uri.parse(
+              'https://apq.andamandev.com/api/v1/queue-mobile/caller-queue-all')
           .replace(queryParameters: queryParameters);
       final response = await http.get(
         uri,
