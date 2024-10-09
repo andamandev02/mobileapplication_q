@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'api/queue/crud.dart';
 import 'loadingsreen.dart';
+import 'provider/provider.dart';
 
 class CancelScreen extends StatefulWidget {
   final List<Map<String, dynamic>> reason;
@@ -21,6 +23,8 @@ class _CancelScreenState extends State<CancelScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final hiveData = Provider.of<DataProvider>(context);
+
     final screenWidth = MediaQuery.of(context).size.width;
     final screenHeight = MediaQuery.of(context).size.height;
     // รับขนาดหน้าจอ
@@ -46,7 +50,7 @@ class _CancelScreenState extends State<CancelScreen> {
                 style: TextStyle(
                   fontSize: fontSize * 1.5,
                   fontWeight: FontWeight.bold,
-                  color: const Color.fromARGB(255, 0, 67, 122),
+                  color: hiveData.colorValue,
                 ),
                 textAlign: TextAlign.center,
               ),
@@ -91,7 +95,7 @@ class _CancelScreenState extends State<CancelScreen> {
                     style: ElevatedButton.styleFrom(
                       foregroundColor: Colors.black,
                       backgroundColor: isGreen
-                          ? const Color.fromARGB(255, 0, 67, 122)
+                          ? hiveData.colorValue
                           : const Color.fromARGB(255, 219, 118, 2),
                       minimumSize: Size(screenWidth * 0.8, screenHeight * 0.10),
                       shape: RoundedRectangleBorder(

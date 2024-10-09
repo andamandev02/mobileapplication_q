@@ -13,12 +13,11 @@ class ClassBranch {
     required BuildContext context,
     required Function(List<Map<String, dynamic>>) onBranchListLoaded,
   }) async {
-    String DomainUrl = "";
-    final hiveData = Provider.of<DataProvider>(context);
-    DomainUrl = hiveData.domainValue ?? "";
     try {
+      final hiveData = Provider.of<DataProvider>(context, listen: false);
+
       final response = await http.get(
-        Uri.parse('$DomainUrl/api/v1/queue-mobile/branch-list'),
+        Uri.parse('${hiveData.domainValue}/api/v1/queue-mobile/branch-list'),
         headers: <String, String>{
           HttpHeaders.contentTypeHeader: 'application/json; charset=UTF-8',
         },
@@ -42,15 +41,14 @@ class ClassBranch {
     required Function(List<Map<String, dynamic>>) onTicketKioskLoaded,
   }) async {
     try {
-      String DomainUrl = "";
-      final hiveData = Provider.of<DataProvider>(context);
-      DomainUrl = hiveData.domainValue ?? "";
+      final hiveData = Provider.of<DataProvider>(context, listen: false);
 
       final queryParameters = {
         'branchid': branchid,
       };
       final response = await http.get(
-        Uri.parse('$DomainUrl/api/v1/queue-mobile/ticket-kiosk-list')
+        Uri.parse(
+                '${hiveData.domainValue}/api/v1/queue-mobile/ticket-kiosk-list')
             .replace(queryParameters: queryParameters),
         headers: <String, String>{
           HttpHeaders.contentTypeHeader: 'application/json; charset=UTF-8',
@@ -94,17 +92,16 @@ class ClassBranch {
     required String branchid,
     required Function(List<Map<String, dynamic>>) onTicketKioskDetailLoaded,
   }) async {
-    String DomainUrl = "";
-    final hiveData = Provider.of<DataProvider>(context);
-    DomainUrl = hiveData.domainValue ?? "";
     try {
+      final hiveData = Provider.of<DataProvider>(context, listen: false);
+
       final queryParameters = {
         'branchid': branchid,
       };
 
-      final uri =
-          Uri.parse('$DomainUrl/api/v1/queue-mobile/ticket-kiosk-detail')
-              .replace(queryParameters: queryParameters);
+      final uri = Uri.parse(
+              '${hiveData.domainValue}/api/v1/queue-mobile/ticket-kiosk-detail')
+          .replace(queryParameters: queryParameters);
       final response = await http.get(
         uri,
         headers: <String, String>{
@@ -136,15 +133,14 @@ class ClassBranch {
     required String branchid,
     required Function(List<Map<String, dynamic>>) onReasonLoaded,
   }) async {
-    String DomainUrl = "";
-    final hiveData = Provider.of<DataProvider>(context);
-    DomainUrl = hiveData.domainValue ?? "";
     try {
+      final hiveData = Provider.of<DataProvider>(context, listen: false);
+
       final queryParameters = {
         'branchid': branchid,
       };
       final response = await http.get(
-        Uri.parse('$DomainUrl/api/v1/queue-mobile/reason-all')
+        Uri.parse('${hiveData.domainValue}/api/v1/queue-mobile/reason-all')
             .replace(queryParameters: queryParameters),
         headers: <String, String>{
           HttpHeaders.contentTypeHeader: 'application/json; charset=UTF-8',

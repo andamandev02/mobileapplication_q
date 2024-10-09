@@ -404,7 +404,7 @@ class SnackBarHelper {
                 message,
                 textAlign: TextAlign.center,
                 style: TextStyle(
-                  fontSize: MediaQuery.of(context).size.width * 0.06,
+                  fontSize: MediaQuery.of(context).size.width * 0.02,
                   color: const Color.fromARGB(255, 0, 67, 122),
                   fontWeight: FontWeight.bold,
                   overflow: TextOverflow.ellipsis,
@@ -415,7 +415,7 @@ class SnackBarHelper {
                 queueNumber,
                 textAlign: TextAlign.center,
                 style: TextStyle(
-                  fontSize: MediaQuery.of(context).size.width * 0.055,
+                  fontSize: MediaQuery.of(context).size.width * 0.03,
                   color: const Color.fromARGB(255, 0, 67, 122),
                   fontWeight: FontWeight.bold,
                   overflow: TextOverflow.ellipsis,

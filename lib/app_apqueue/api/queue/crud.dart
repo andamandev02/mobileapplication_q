@@ -71,11 +71,9 @@ class ClassCQueue {
     double screenWidth = MediaQuery.of(context).size.width;
     double screenHeight = MediaQuery.of(context).size.height;
 
-    String DomainUrl = "";
-    final hiveData = Provider.of<DataProvider>(context);
-    DomainUrl = hiveData.domainValue ?? "";
-
     try {
+      final hiveData = Provider.of<DataProvider>(context, listen: false);
+
       var body = jsonEncode({
         'Pax': Pax,
         'Customername': Customername,
@@ -86,7 +84,7 @@ class ClassCQueue {
       });
 
       final response = await http.post(
-        Uri.parse('$DomainUrl/api/v1/queue-mobile/create-queue'),
+        Uri.parse('${hiveData.domainValue}/api/v1/queue-mobile/create-queue'),
         headers: <String, String>{
           HttpHeaders.contentTypeHeader: 'application/json; charset=UTF-8',
         },
@@ -181,34 +179,20 @@ class ClassCQueue {
     required String branchid,
   }) async {
     try {
-      String DomainUrl = "";
-      final hiveData = Provider.of<DataProvider>(context);
-      DomainUrl = hiveData.domainValue ?? "";
+      final hiveData = Provider.of<DataProvider>(context, listen: false);
 
       final queryParameters = {
         'branchid': branchid,
       };
-      final uri = Uri.parse('$DomainUrl/api/v1/queue-mobile/mid-night')
-          .replace(queryParameters: queryParameters);
+      final uri =
+          Uri.parse('${hiveData.domainValue}/api/v1/queue-mobile/mid-night')
+              .replace(queryParameters: queryParameters);
       final response = await http.post(
         uri,
         headers: <String, String>{
           HttpHeaders.contentTypeHeader: 'application/json; charset=UTF-8',
         },
       );
-
-      // final body = jsonEncode({
-      //   'branchid': branchid,
-      // });
-
-      // final response = await http.post(
-      //   Uri.parse(
-      //       '$DomainUrl/api/v1/queue-mobile/mid-night'),
-      //   headers: <String, String>{
-      //     HttpHeaders.contentTypeHeader: 'application/json; charset=UTF-8',
-      //   },
-      //   body: body,
-      // );
 
       if (response.statusCode == 200) {
         var ToSocket = CALL;
@@ -256,9 +240,7 @@ class ClassCQueue {
     try {
       await initializeWebSocket();
 
-      String DomainUrl = "";
-      final hiveData = Provider.of<DataProvider>(context);
-      DomainUrl = hiveData.domainValue ?? "";
+      final hiveData = Provider.of<DataProvider>(context, listen: false);
 
       var body = jsonEncode({
         'SearchQueue': jsonEncode(SearchQueue),
@@ -267,7 +249,7 @@ class ClassCQueue {
       });
 
       final response = await http.post(
-        Uri.parse('$DomainUrl/api/v1/queue-mobile/update-queue'),
+        Uri.parse('${hiveData.domainValue}/api/v1/queue-mobile/update-queue'),
         headers: <String, String>{
           HttpHeaders.contentTypeHeader: 'application/json; charset=UTF-8',
         },
@@ -360,9 +342,7 @@ class ClassCQueue {
     try {
       await initializeWebSocket();
 
-      String DomainUrl = "";
-      final hiveData = Provider.of<DataProvider>(context);
-      DomainUrl = hiveData.domainValue ?? "";
+      final hiveData = Provider.of<DataProvider>(context, listen: false);
 
       var body = jsonEncode({
         'TicketKioskDetail': TicketKioskDetail,
@@ -371,7 +351,7 @@ class ClassCQueue {
       });
 
       final response = await http.post(
-        Uri.parse('$DomainUrl/api/v1/queue-mobile/call-queue'),
+        Uri.parse('${hiveData.domainValue}/api/v1/queue-mobile/call-queue'),
         headers: <String, String>{
           HttpHeaders.contentTypeHeader: 'application/json; charset=UTF-8',
         },
@@ -457,16 +437,14 @@ class ClassCQueue {
     try {
       await initializeWebSocket();
 
-      String DomainUrl = "";
-      final hiveData = Provider.of<DataProvider>(context);
-      DomainUrl = hiveData.domainValue ?? "";
+      final hiveData = Provider.of<DataProvider>(context, listen: false);
 
       var body = jsonEncode({
         'SearchQueue': jsonEncode(SearchQueue),
       });
 
       final response = await http.post(
-        Uri.parse('$DomainUrl/api/v1/queue-mobile/call-queue'),
+        Uri.parse('${hiveData.domainValue}/api/v1/queue-mobile/call-queue'),
         headers: <String, String>{
           HttpHeaders.contentTypeHeader: 'application/json; charset=UTF-8',
         },
@@ -482,7 +460,7 @@ class ClassCQueue {
         String queueNo = queueData['queue_no'].toString();
         String callerid = callerData['caller_id'].toString();
 
-        String ToMsg = "กำลังเรียกคิว\Calling in queue";
+        String ToMsg = "กำลังเรียกคิว\nCalling in queue";
         String queueNumber = queueNo;
         SnackBarHelper.showErrorDialog(context, ToMsg, queueNumber);
 

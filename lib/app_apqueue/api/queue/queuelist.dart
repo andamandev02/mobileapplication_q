@@ -68,15 +68,15 @@ class ClassQueue {
     required String branchid,
     required Function(List<Map<String, dynamic>>) onSearchQueueLoaded,
   }) async {
-    String DomainUrl = "";
-    final hiveData = Provider.of<DataProvider>(context);
-    DomainUrl = hiveData.domainValue ?? "";
     try {
+      final hiveData = Provider.of<DataProvider>(context, listen: false);
+
       final queryParameters = {
         'branchid': branchid,
       };
-      final uri = Uri.parse('$DomainUrl/api/v1/queue-mobile/search-queue')
-          .replace(queryParameters: queryParameters);
+      final uri =
+          Uri.parse('${hiveData.domainValue}/api/v1/queue-mobile/search-queue')
+              .replace(queryParameters: queryParameters);
       final response = await http.get(
         uri,
         headers: <String, String>{
@@ -111,13 +111,13 @@ class ClassQueue {
     required Function(List<Map<String, dynamic>>) onCallerQueueAllLoaded,
   }) async {
     try {
-      String DomainUrl = "";
-      final hiveData = Provider.of<DataProvider>(context);
-      DomainUrl = hiveData.domainValue ?? "";
+      final hiveData = Provider.of<DataProvider>(context, listen: false);
+
       final queryParameters = {
         'branchid': branchid,
       };
-      final uri = Uri.parse('${DomainUrl}/api/v1/queue-mobile/caller-queue-all')
+      final uri = Uri.parse(
+              '${hiveData.domainValue}/api/v1/queue-mobile/caller-queue-all')
           .replace(queryParameters: queryParameters);
       final response = await http.get(
         uri,
